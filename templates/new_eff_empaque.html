@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Ejercicio de Eficiencia - PepsiCo{% endblock %}
+
+{% block page_title %}Nuevo Ejercicio de Eficiencia{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .form-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .form-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+    }
+    
+    .back-link {
+        color: var(--pepsico-blue);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .back-link i {
+        margin-right: 0.25rem;
+    }
+    
+    .form-note {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background-color: var(--pepsico-blue);
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('eff_empaque') }}" class="back-link">
+    <i class="fas fa-arrow-left"></i> Volver a Ejercicios
+</a>
+
+<div class="form-container">
+    <div class="form-header">
+        <h4 class="form-title"><i class="fas fa-plus-circle me-2"></i>Nuevo Ejercicio de Eficiencia</h4>
+    </div>
+    
+    <div class="form-note">
+        <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i>Instrucciones</h5>
+        <p class="mb-0">Complete los siguientes pasos para crear un nuevo ejercicio de eficiencia de empaque. Primero seleccione la unidad de negocio y planta donde se realizará el ejercicio, luego podrá ingresar los datos específicos de la medición.</p>
+    </div>
+    
+    <form method="post" action="{{ url_for('new_eff_empaque') }}">
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+                <label for="bu_id" class="form-label">
+                    <span class="step-number">1</span> Seleccione Unidad de Negocio
+                </label>
+                <select class="form-select" id="bu_id" name="bu_id" required>
+                    <option value="">Seleccione BU...</option>
+                    {% for bu in bus %}
+                    <option value="{{ bu.id }}">{{ bu.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="plant_id" class="form-label">
+                    <span class="step-number">2</span> Seleccione Planta
+                </label>
+                <select class="form-select" id="plant_id" name="plant_id" required>
+                    <option value="">Seleccione Planta...</option>
+                    {% for plant in plants %}
+                    <option value="{{ plant.id }}" data-bu="{{ plant.bu_id }}" style="display: none;">{{ plant.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-end">
+            <a href="{{ url_for('eff_empaque') }}" class="btn btn-light me-2">Cancelar</a>
+            <button type="submit" class="btn btn-pepsico">
+                <i class="fas fa-arrow-right me-1"></i> Continuar
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filtrar las plantas según el BU seleccionado
+        document.getElementById('bu_id').addEventListener('change', function() {
+            var selectedBU = this.value;
+            var plantSelect = document.getElementById('plant_id');
+            
+            // Ocultar todas las opciones de plantas primero
+            for (var i = 0; i < plantSelect.options.length; i++) {
+                var option = plantSelect.options[i];
+                if (option.value === "") {
+                    // No ocultar la opción por defecto
+                    continue;
+                }
+                
+                if (selectedBU === "" || option.getAttribute('data-bu') === selectedBU) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+            
+            // Reiniciar la selección de planta
+            plantSelect.value = "";
+        });
+    });
+</script>
+{% endblock %}

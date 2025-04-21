@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+
+{% block title %}Eficiencia de Empaque - PepsiCo{% endblock %}
+
+{% block page_title %}Eficiencia de Empaque{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .efficiency-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .efficiency-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .efficiency-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+    }
+    
+    .efficiency-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+        border-top: 4px solid var(--frito-lay-yellow);
+        height: 100%;
+    }
+    
+    .efficiency-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .efficiency-card-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .efficiency-card-body {
+        padding: 1.25rem;
+    }
+    
+    .efficiency-card-footer {
+        padding: 1rem 1.25rem;
+        background-color: #f8f9fa;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .efficiency-table {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .efficiency-table thead {
+        background-color: var(--pepsico-blue);
+        color: white;
+    }
+    
+    .efficiency-table th {
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .efficiency-actions .btn {
+        border-radius: 50px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .efficiency-search {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .efficiency-search-header {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .efficiency-search-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background-color: var(--pepsico-blue);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+    
+    .efficiency-search-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+    }
+    
+    .efficiency-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
+    
+    .efficiency-metric {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+        flex: 1 0 200px;
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .efficiency-metric-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background-color: rgba(0, 87, 168, 0.1);
+        color: var(--pepsico-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+    
+    .efficiency-metric-value {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+        margin-bottom: 0.25rem;
+        line-height: 1;
+    }
+    
+    .efficiency-metric-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .efficiency-status {
+        padding: 0.25rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .efficiency-status.completed {
+        background-color: rgba(25, 135, 84, 0.1);
+        color: #198754;
+    }
+    
+    .efficiency-status.in-progress {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+    }
+    
+    .efficiency-status.pending {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+    
+    .modal-header {
+        background-color: var(--pepsico-blue);
+        color: white;
+    }
+    
+    .btn-create {
+        background-color: var(--pepsico-blue);
+        color: white;
+    }
+    
+    .btn-create:hover {
+        background-color: #004b91;
+        color: white;
+    }
+    
+    @media (max-width: 576px) {
+        .efficiency-metric {
+            flex: 1 0 100%;
+            margin-right: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="efficiency-search">
+    <div class="efficiency-search-header">
+        <div class="efficiency-search-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <h5 class="efficiency-search-title">Buscar Ejercicios de Eficiencia</h5>
+    </div>
+    
+    <form method="get">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group mb-3">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="fas fa-filter"></i>
+                    </span>
+                    <input type="text" name="q" class="form-control bg-light border-0" placeholder="Buscar por BU, Planta, Línea, Sabor..." value="{{ query }}">
+                    <button class="btn btn-pepsico" type="submit">Buscar</button>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{{ url_for('new_eff_empaque') }}" class="btn btn-create w-100">
+                    <i class="fas fa-plus-circle me-1"></i> Nuevo Ejercicio
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="efficiency-metrics">
+    <div class="efficiency-metric">
+        <div class="efficiency-metric-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div>
+            <div class="efficiency-metric-value">{{ exercises|length }}</div>
+            <div class="efficiency-metric-label">Ejercicios Totales</div>
+        </div>
+    </div>
+    
+    <div class="efficiency-metric">
+        <div class="efficiency-metric-icon" style="background-color: rgba(25, 135, 84, 0.1); color: #198754;">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div>
+            <div class="efficiency-metric-value">{{ exercises|selectattr('data', 'defined')|list|length }}</div>
+            <div class="efficiency-metric-label">Ejercicios Completos</div>
+        </div>
+    </div>
+    
+    <div class="efficiency-metric">
+        <div class="efficiency-metric-icon" style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div>
+            <div class="efficiency-metric-value">{{ exercises|rejectattr('data', 'defined')|list|length }}</div>
+            <div class="efficiency-metric-label">Ejercicios Pendientes</div>
+        </div>
+    </div>
+</div>
+
+<div class="efficiency-container">
+    <div class="efficiency-header">
+        <h4 class="efficiency-title"><i class="fas fa-box me-2"></i>Ejercicios de Eficiencia de Empaque</h4>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table efficiency-table" id="exercisesTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>BU</th>
+                    <th>Planta</th>
+                    <th>Línea</th>
+                    <th>Fecha Creación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ex in exercises %}
+                <tr>
+                    <td>{{ ex.id }}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">
+                                <i class="fas fa-building text-primary"></i>
+                            </div>
+                            <span>{{ ex.bu.name if ex.bu else 'N/A' }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">
+                                <i class="fas fa-industry text-success"></i>
+                            </div>
+                            <span>{{ ex.plant.name if ex.plant else 'N/A' }}</span>
+                        </div>
+                    </td>
+                    <td>{{ ex.linea or 'No especificada' }}</td>
+                    <td>{{ ex.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>
+                        {% if ex.data and ex.data != '{}' %}
+                            <span class="efficiency-status completed">Completado</span>
+                        {% else %}
+                            <span class="efficiency-status pending">Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td class="efficiency-actions">
+                        <a href="{{ url_for('view_eff_empaque', exercise_id=ex.id) }}" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="{{ url_for('excel_eff_empaque', exercise_id=ex.id) }}" class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <form action="{{ url_for('delete_eff_empaque', exercise_id=ex.id) }}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Está seguro que desea eliminar este ejercicio? Esta acción no se puede deshacer.')">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal eliminado, ahora se usa la página new_eff_empaque.html -->
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filtrar las plantas según el BU seleccionado
+        document.getElementById('bu_id').addEventListener('change', function() {
+            var selectedBU = this.value;
+            var plantSelect = document.getElementById('plant_id');
+            for (var i = 0; i < plantSelect.options.length; i++) {
+                var option = plantSelect.options[i];
+                if (option.value === "") continue;
+                if (option.getAttribute('data-bu') === selectedBU) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+            plantSelect.value = "";
+        });
+        
+        // Inicializar DataTable si existe jQuery y DataTables
+        if (typeof $ !== 'undefined' && $.fn.DataTable) {
+            $('#exercisesTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
+                },
+                "pageLength": 10,
+                "order": [[ 4, "desc" ]] // Ordenar por fecha de creación (columna 4) descendente
+            });
+        }
+    });
+</script>
+{% endblock %}
