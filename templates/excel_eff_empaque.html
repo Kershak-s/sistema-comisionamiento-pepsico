@@ -1,0 +1,550 @@
+{% extends "base.html" %}
+
+{% block title %}Editor de Empaque - PepsiCo{% endblock %}
+
+{% block page_title %}Editor de Eficiencia de Empaque{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .editor-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .editor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .editor-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+    }
+    
+    .back-link {
+        color: var(--pepsico-blue);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .back-link i {
+        margin-right: 0.25rem;
+    }
+    
+    .exercise-summary {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .excel-grid {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .excel-grid .form-control,
+    .excel-grid .form-select {
+        border: none;
+        border-radius: 0;
+        padding: 0.75rem 1rem;
+    }
+    
+    .excel-grid .form-control:focus,
+    .excel-grid .form-select:focus {
+        box-shadow: none;
+        border: 1px solid var(--pepsico-blue);
+        z-index: 1;
+    }
+    
+    .excel-row {
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .excel-cell {
+        border-right: 1px solid #dee2e6;
+        padding: 0 !important;
+    }
+    
+    .excel-cell:last-child {
+        border-right: none;
+    }
+    
+    .excel-header {
+        background-color: #f8f9fa;
+        font-weight: 500;
+        color: #495057;
+        padding: 0.75rem 1rem;
+        border-right: 1px solid #dee2e6;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .excel-header:last-child {
+        border-right: none;
+    }
+    
+    .excel-row-header {
+        background-color: #f8f9fa;
+        font-weight: 500;
+        color: #495057;
+        padding: 0.75rem 1rem;
+        border-right: 1px solid #dee2e6;
+        width: 200px;
+    }
+    
+    .excel-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+    
+    .excel-input-readonly {
+        background-color: #f8f9fa !important;
+        font-weight: 500;
+        color: var(--pepsico-blue);
+    }
+    
+    .excel-section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+        margin: 2rem 0 1rem;
+    }
+    
+    .excel-add-row {
+        width: 100%;
+        border: 2px dashed #dee2e6;
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 500;
+        text-align: center;
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        transition: all 0.2s;
+    }
+    
+    .excel-add-row:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+        cursor: pointer;
+    }
+    
+    .formula-help {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-top: 1.5rem;
+        position: relative;
+    }
+    
+    .formula-help-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .formula-help-title i {
+        margin-right: 0.5rem;
+        color: var(--pepsico-blue);
+    }
+    
+    .formula-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .formula-list li {
+        margin-bottom: 0.75rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+    
+    .formula-list li:before {
+        content: '\2022';
+        color: var(--pepsico-blue);
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    
+    .formula-code {
+        background-color: #e9ecef;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('eff_empaque') }}" class="back-link">
+    <i class="fas fa-arrow-left"></i> Volver a Ejercicios
+</a>
+
+<div class="exercise-summary">
+    <div class="row">
+        <div class="col-lg-8">
+            <h4 class="mb-2">Ejercicio #{{ exercise.id }}</h4>
+            <div class="d-flex flex-wrap mb-3">
+                <div class="badge bg-primary me-2 mb-1">{{ exercise.bu.name if exercise.bu else 'N/A' }}</div>
+                <div class="badge bg-success me-2 mb-1">{{ exercise.plant.name if exercise.plant else 'N/A' }}</div>
+                {% if exercise.linea %}
+                    <div class="badge bg-info me-2 mb-1">{{ exercise.linea }}</div>
+                {% endif %}
+                <div class="badge bg-secondary mb-1">
+                    <i class="fas fa-calendar me-1"></i> 
+                    {{ exercise.created_at.strftime('%d/%m/%Y %H:%M') }}
+                </div>
+            </div>
+            <p class="text-muted mb-0">Complete los datos del ejercicio de eficiencia de empaque. Los campos en gris son calculados automáticamente.</p>
+        </div>
+    </div>
+</div>
+
+<div class="editor-container">
+    <div class="editor-header">
+        <h4 class="editor-title"><i class="fas fa-table me-2"></i>Datos de Eficiencia</h4>
+    </div>
+    
+    <form method="post">
+        <!-- Botonera de acciones -->
+        <div class="excel-actions">
+            <div>
+                <button type="button" class="btn btn-light" id="addRowBtn">
+                    <i class="fas fa-plus-circle me-1"></i> Añadir Fila
+                </button>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-pepsico">
+                    <i class="fas fa-save me-1"></i> Guardar Cambios
+                </button>
+                <a href="{{ url_for('view_eff_empaque', exercise_id=exercise.id) }}" class="btn btn-light ms-2">
+                    <i class="fas fa-eye me-1"></i> Ver Resultados
+                </a>
+            </div>
+        </div>
+        
+        <!-- Tabla estilo Excel -->
+        <div class="table-responsive">
+            <table class="table excel-grid" id="excelTable">
+                <thead>
+                    <tr>
+                        <th class="excel-header">Sabor</th>
+                        <th class="excel-header">Tubo</th>
+                        <th class="excel-header">Peso (gr)</th>
+                        <th class="excel-header">BPM Actual</th>
+                        <th class="excel-header">Tiempo (min)</th>
+                        <th class="excel-header">Total PQ</th>
+                        <th class="excel-header">PQ Buenos</th>
+                        <th class="excel-header">BPM Propuesta</th>
+                        <th class="excel-header">BPM Global</th>
+                        <th class="excel-header" style="width: 70px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="excelBody">
+                    {% for capture in data.captures %}
+                    <tr class="excel-row data-row">
+                        <td class="excel-cell">
+                            <select class="form-select" name="sabor[]">
+                                <option value="" {% if not capture.sabor %}selected{% endif %}>Seleccionar...</option>
+                                {% for flavor in flavors %}
+                                <option value="{{ flavor.name }}" {% if capture.sabor == flavor.name %}selected{% endif %}>{{ flavor.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td class="excel-cell">
+                            <input type="text" class="form-control" name="tubo[]" value="{{ capture.tubo }}" placeholder="Tubo">
+                        </td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control peso-gr" name="peso_gr[]" value="{{ capture.peso_gr }}" placeholder="0" step="0.01">
+                        </td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control bpm-actual" name="bpm_actual[]" value="{{ capture.bpm_actual }}" placeholder="0" step="0.01">
+                        </td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control tiempo" name="tiempo[]" value="{{ capture.tiempo }}" placeholder="0" step="0.01">
+                        </td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control total-pq" name="total_pq[]" value="{{ capture.total_pq }}" placeholder="0" step="1">
+                        </td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control total-pq-buenos" name="total_pq_buenos[]" value="{{ capture.total_pq_buenos }}" placeholder="0" step="1">
+                        </td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control bpm-propuesta" name="bpm_propuesta[]" value="{{ capture.bpm_propuesta }}" placeholder="0" step="0.01">
+                        </td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control bpm-global" name="bpm_global[]" value="{{ capture.bpm_global }}" placeholder="0" step="0.01">
+                        </td>
+                        <td class="excel-cell text-center">
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-row">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Segunda fila con más datos -->
+                    <tr class="excel-row">
+                        <td class="excel-cell">
+                            <input type="text" class="form-control" name="seasoning[]" value="{{ capture.seasoning }}" placeholder="Seasoning">
+                        </td>
+                        <td class="excel-cell" colspan="2">
+                            <input type="number" class="form-control eff-std-empaque" name="eff_std_empaque[]" value="{{ capture.eff_std_empaque }}" placeholder="Eff Std Empaque (%)" step="0.01">
+                        </td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control pq-global excel-input-readonly" name="pq_global[]" value="{{ capture.pq_global }}" placeholder="0" readonly>
+                        </td>
+                        <td class="excel-cell" colspan="5">
+                            <input type="text" class="form-control" name="desperdicio[]" value="{{ capture.desperdicio }}" placeholder="Comentarios de desperdicio">
+                        </td>
+                        <td class="excel-cell"></td>
+                    </tr>
+                    
+                    <!-- Tercera fila con eficiencias -->
+                    <tr class="excel-row">
+                        <td class="excel-cell excel-row-header">Eficiencia de Empaque (%)</td>
+                        <td class="excel-cell" colspan="3">
+                            <input type="number" class="form-control eff-actual-empaque excel-input-readonly" name="eff_actual_empaque[]" value="{{ capture.eff_actual_empaque }}" placeholder="0" readonly>
+                        </td>
+                        <td class="excel-cell" colspan="2">
+                            <input type="number" class="form-control mejora-propuesta" name="mejora_propuesta[]" value="{{ capture.mejora_propuesta }}" placeholder="0" step="0.01">
+                        </td>
+                        <td class="excel-cell" colspan="3">
+                            <input type="number" class="form-control eff-propuesta excel-input-readonly" name="eff_propuesta[]" value="{{ capture.eff_propuesta }}" placeholder="0" readonly>
+                        </td>
+                        <td class="excel-cell"></td>
+                    </tr>
+                    
+                    <!-- Cuarta fila con PT -->
+                    <tr class="excel-row">
+                        <td class="excel-cell excel-row-header">Producción Teórica (PT)</td>
+                        <td class="excel-cell">
+                            <input type="number" class="form-control std-pt excel-input-readonly" name="std_pt[]" value="{{ capture.std_pt }}" placeholder="0" readonly>
+                        </td>
+                        <td class="excel-cell" colspan="3">
+                            <input type="number" class="form-control actual-pt excel-input-readonly" name="actual_pt[]" value="{{ capture.actual_pt }}" placeholder="0" readonly>
+                        </td>
+                        <td class="excel-cell" colspan="2">
+                            <input type="number" class="form-control propuesta-pt excel-input-readonly" name="propuesta_pt[]" value="{{ capture.propuesta_pt }}" placeholder="0" readonly>
+                        </td>
+                        <td class="excel-cell" colspan="2">
+                            <input type="number" class="form-control global-pt excel-input-readonly" name="global_pt[]" value="{{ capture.global_pt }}" placeholder="0" readonly>
+                        </td>
+                        <td class="excel-cell"></td>
+                    </tr>
+                    
+                    <!-- Espacio entre grupos de datos -->
+                    <tr class="excel-row" style="height: 20px; background-color: #f0f0f0;">
+                        <td colspan="10"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Ayuda con fórmulas -->
+        <div class="formula-help">
+            <h5 class="formula-help-title"><i class="fas fa-lightbulb"></i>Fórmulas Utilizadas</h5>
+            <ul class="formula-list">
+                <li><strong>PQ Global</strong>: Se calcula como <span class="formula-code">Total PQ Buenos / Tiempo</span></li>
+                <li><strong>Eficiencia Actual de Empaque</strong>: <span class="formula-code">(BPM Actual / BPM Global) * 100</span></li>
+                <li><strong>Eficiencia Propuesta</strong>: <span class="formula-code">Eficiencia Actual + Mejora Propuesta</span></li>
+                <li><strong>PT Estándar</strong>: <span class="formula-code">BPM Global * (Eff Std Empaque / 100) * Peso GR * 60 / 1000</span></li>
+                <li><strong>PT Actual</strong>: <span class="formula-code">BPM Actual * Peso GR * 60 / 1000</span></li>
+                <li><strong>PT Propuesta</strong>: <span class="formula-code">BPM Propuesta * Peso GR * 60 / 1000</span></li>
+                <li><strong>PT Global</strong>: <span class="formula-code">BPM Global * Peso GR * 60 / 1000</span></li>
+            </ul>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para clonar una fila completa (4 filas en realidad)
+        function addNewDataRow() {
+            // Obtener todas las filas de datos
+            const rows = document.querySelectorAll('.data-row');
+            if (rows.length === 0) return;
+            
+            // Usar la primera fila como template
+            const templateRow = rows[0];
+            
+            // Clonar las siguientes 4 filas (grupo completo)
+            const cloneGroup = [];
+            let currentRow = templateRow;
+            for (let i = 0; i < 5; i++) { // 4 filas de datos + 1 de espacio
+                if (!currentRow) break;
+                cloneGroup.push(currentRow.cloneNode(true));
+                currentRow = currentRow.nextElementSibling;
+            }
+            
+            // Limpiar los valores en los clones
+            cloneGroup.forEach(row => {
+                const inputs = row.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    if (input.type === 'number') {
+                        input.value = '0';
+                    } else {
+                        input.value = '';
+                    }
+                    
+                    // Mantener los selects con la opción por defecto
+                    if (input.tagName === 'SELECT') {
+                        input.selectedIndex = 0;
+                    }
+                });
+            });
+            
+            // Insertar los clones antes de la última fila espaciadora
+            const tableBody = document.getElementById('excelBody');
+            for (let i = 0; i < cloneGroup.length; i++) {
+                tableBody.appendChild(cloneGroup[i]);
+            }
+            
+            // Actualizar event listeners en los nuevos elementos
+            initCalculations();
+            initDeleteButtons();
+        }
+        
+        // Inicializar botones de eliminación de fila
+        function initDeleteButtons() {
+            const deleteButtons = document.querySelectorAll('.delete-row');
+            deleteButtons.forEach(button => {
+                button.onclick = function() {
+                    const row = this.closest('.data-row');
+                    if (!row) return;
+                    
+                    // Eliminar 5 filas (4 de datos + 1 de espacio)
+                    let currentRow = row;
+                    for (let i = 0; i < 5; i++) {
+                        if (!currentRow) break;
+                        const nextRow = currentRow.nextElementSibling;
+                        currentRow.remove();
+                        currentRow = nextRow;
+                    }
+                    
+                    // Si no quedan filas, añadir una nueva
+                    const remainingRows = document.querySelectorAll('.data-row');
+                    if (remainingRows.length === 0) {
+                        addNewDataRow();
+                    }
+                };
+            });
+        }
+        
+        // Inicializar cálculos automáticos
+        function initCalculations() {
+            // Seleccionar todas las filas de datos
+            const dataRows = document.querySelectorAll('.data-row');
+            
+            dataRows.forEach(row => {
+                // Obtener las 4 filas del grupo (fila actual + 3 siguientes)
+                const group = [row];
+                let currentRow = row.nextElementSibling;
+                for (let i = 0; i < 3; i++) {
+                    if (currentRow && !currentRow.classList.contains('data-row')) {
+                        group.push(currentRow);
+                        currentRow = currentRow.nextElementSibling;
+                    }
+                }
+                
+                if (group.length !== 4) return; // Asegurarse de tener el grupo completo
+                
+                // Obtener los campos relevantes
+                const pesoGrInput = row.querySelector('.peso-gr');
+                const bpmActualInput = row.querySelector('.bpm-actual');
+                const tiempoInput = row.querySelector('.tiempo');
+                const totalPqInput = row.querySelector('.total-pq');
+                const totalPqBuenosInput = row.querySelector('.total-pq-buenos');
+                const bpmPropuestaInput = row.querySelector('.bpm-propuesta');
+                const bpmGlobalInput = row.querySelector('.bpm-global');
+                
+                // Segunda fila
+                const effStdEmpaqueInput = group[1].querySelector('.eff-std-empaque');
+                const pqGlobalInput = group[1].querySelector('.pq-global');
+                
+                // Tercera fila
+                const effActualEmpaqueInput = group[2].querySelector('.eff-actual-empaque');
+                const mejoraPropuestaInput = group[2].querySelector('.mejora-propuesta');
+                const effPropuestaInput = group[2].querySelector('.eff-propuesta');
+                
+                // Cuarta fila
+                const stdPtInput = group[3].querySelector('.std-pt');
+                const actualPtInput = group[3].querySelector('.actual-pt');
+                const propuestaPtInput = group[3].querySelector('.propuesta-pt');
+                const globalPtInput = group[3].querySelector('.global-pt');
+                
+                // Funciones de cálculo
+                function calculateAll() {
+                    // PQ Global = Total PQ Buenos / Tiempo
+                    if (tiempoInput.value > 0) {
+                        pqGlobalInput.value = (parseFloat(totalPqBuenosInput.value) / parseFloat(tiempoInput.value)).toFixed(2);
+                    }
+                    
+                    // Eficiencia Actual = (BPM Actual / BPM Global) * 100
+                    if (parseFloat(bpmGlobalInput.value) > 0) {
+                        effActualEmpaqueInput.value = ((parseFloat(bpmActualInput.value) / parseFloat(bpmGlobalInput.value)) * 100).toFixed(2);
+                    }
+                    
+                    // Eficiencia Propuesta = Eficiencia Actual + Mejora Propuesta
+                    effPropuestaInput.value = (parseFloat(effActualEmpaqueInput.value) + parseFloat(mejoraPropuestaInput.value)).toFixed(2);
+                    
+                    // PT Estándar = BPM Global * (Eff Std Empaque / 100) * Peso GR * 60 / 1000
+                    stdPtInput.value = (parseFloat(bpmGlobalInput.value) * (parseFloat(effStdEmpaqueInput.value) / 100) * 
+                                        parseFloat(pesoGrInput.value) * 60 / 1000).toFixed(2);
+                    
+                    // PT Actual = BPM Actual * Peso GR * 60 / 1000
+                    actualPtInput.value = (parseFloat(bpmActualInput.value) * parseFloat(pesoGrInput.value) * 60 / 1000).toFixed(2);
+                    
+                    // PT Propuesta = BPM Propuesta * Peso GR * 60 / 1000
+                    propuestaPtInput.value = (parseFloat(bpmPropuestaInput.value) * parseFloat(pesoGrInput.value) * 60 / 1000).toFixed(2);
+                    
+                    // PT Global = BPM Global * Peso GR * 60 / 1000
+                    globalPtInput.value = (parseFloat(bpmGlobalInput.value) * parseFloat(pesoGrInput.value) * 60 / 1000).toFixed(2);
+                }
+                
+                // Asociar eventos a los campos de entrada
+                const inputFields = [
+                    pesoGrInput, bpmActualInput, tiempoInput, totalPqInput, totalPqBuenosInput,
+                    bpmPropuestaInput, bpmGlobalInput, effStdEmpaqueInput, mejoraPropuestaInput
+                ];
+                
+                inputFields.forEach(input => {
+                    input.addEventListener('input', calculateAll);
+                    input.addEventListener('change', calculateAll);
+                });
+                
+                // Calcular inicialmente
+                calculateAll();
+            });
+        }
+        
+        // Botón para agregar nueva fila
+        document.getElementById('addRowBtn').addEventListener('click', addNewDataRow);
+        
+        // Inicializar los botones de eliminar y cálculos automáticos
+        initDeleteButtons();
+        initCalculations();
+    });
+</script>
+{% endblock %}
