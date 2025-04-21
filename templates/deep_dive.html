@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}Deep Dive - PepsiCo{% endblock %}
+
+{% block page_title %}Análisis Deep Dive{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .deep-dive-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: none;
+    }
+    
+    .deep-dive-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .deep-dive-card .card-header {
+        background-color: var(--pepsico-blue);
+        color: white;
+        font-weight: 600;
+        padding: 1.2rem;
+    }
+    
+    .deep-dive-card .icon-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.15);
+        margin-bottom: 1rem;
+    }
+    
+    .deep-dive-card .icon-wrapper i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.8rem;
+    }
+    
+    .deep-dive-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .deep-dive-card p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    
+    .deep-dive-card .btn {
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+    }
+    
+    .metrics-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .metric-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.2rem;
+        text-align: center;
+        height: 100%;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0.5rem 0;
+    }
+    
+    .metric-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="metrics-container">
+            <h4 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>Métricas Clave</h4>
+            <div class="row">
+                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-primary text-white mb-2" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%;">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="metric-value text-primary">85%</div>
+                        <div class="metric-label">Eficiencia Promedio</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-success text-white mb-2" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%;">
+                            <i class="fas fa-weight"></i>
+                        </div>
+                        <div class="metric-value text-success">98.2%</div>
+                        <div class="metric-label">Precisión de Peso</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-info text-white mb-2" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%;">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="metric-value text-info">142</div>
+                        <div class="metric-label">Unidades/Minuto</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="metric-card">
+                        <div class="icon-wrapper bg-warning text-white mb-2" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="metric-value text-warning">1.4%</div>
+                        <div class="metric-label">Tasa de Desperdicio</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="deep-dive-card card">
+            <div class="card-header d-flex align-items-center">
+                <div class="icon-wrapper me-3">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Eficiencia de Empaque</h5>
+                    <p class="mb-0 small">Análisis detallado de eficiencia</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>Analice y optimice la eficiencia del proceso de empaque, identificando puntos de mejora y ajustando parámetros para maximizar el rendimiento.</p>
+                <a href="{{ url_for('eff_empaque') }}" class="btn btn-pepsico">
+                    <i class="fas fa-chart-line me-2"></i> Ver análisis
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="deep-dive-card card">
+            <div class="card-header d-flex align-items-center" style="background-color: #4CAF50;">
+                <div class="icon-wrapper me-3">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">DEM</h5>
+                    <p class="mb-0 small">Design Manufacturing Efficiency</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>Evalþe la eficiencia desde el diseño de manufactura, optimizando procesos desde su concepción para maximizar la producción.</p>
+                <a href="#" class="btn btn-success">
+                    <i class="fas fa-cogs me-2"></i> Analizar DEM
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="deep-dive-card card">
+            <div class="card-header d-flex align-items-center" style="background-color: #FF9800;">
+                <div class="icon-wrapper me-3">
+                    <i class="fas fa-weight"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Carga de Pesos</h5>
+                    <p class="mb-0 small">Gestión y análisis de pesaje</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>Gestione y analice los datos de peso del producto, asegurando la consistencia y cumplimiento de estándares regulatorios.</p>
+                <a href="#" class="btn" style="background-color: #FF9800; color: white;">
+                    <i class="fas fa-balance-scale me-2"></i> Gestionar pesos
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="deep-dive-card card">
+            <div class="card-header d-flex align-items-center" style="background-color: #9C27B0;">
+                <div class="icon-wrapper me-3">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Balance de Línea</h5>
+                    <p class="mb-0 small">Optimización de procesos</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>Equilibre las cargas de trabajo y optimice la distribución de recursos en la línea de producción para maximizar la eficiencia general.</p>
+                <a href="#" class="btn" style="background-color: #9C27B0; color: white;">
+                    <i class="fas fa-layer-group me-2"></i> Balancear línea
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Rendimiento Histórico</h5>
+                <div>
+                    <select class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                        <option>Últimos 7 días</option>
+                        <option>Últimos 30 días</option>
+                        <option>Últimos 90 días</option>
+                        <option>Este año</option>
+                    </select>
+                    <button class="btn btn-sm btn-pepsico ms-2">Actualizar</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-chart-line fa-3x mb-3"></i>
+                    <p>Seleccione un período para visualizar el rendimiento histórico</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Deep Dive page loaded');
+        
+        // Aquí se puede añadir código JavaScript específico para la página Deep Dive
+        // Por ejemplo, gráficos, filtros dinámicos, etc.
+    });
+</script>
+{% endblock %}

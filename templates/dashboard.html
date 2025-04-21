@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - PepsiCo{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-body p-4">
+                <h4 class="card-title text-primary">
+                    <i class="fas fa-user-circle me-2"></i>Bienvenido, {{ session.get('username', 'Usuario') }}
+                </h4>
+                <p class="card-text">
+                    Sistema de comisionamiento para líneas de producción de Frito-Lay. Utilice el menú lateral para acceder a las diferentes secciones del sistema.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="dashboard-card shadow">
+            <div class="dashboard-card-header">
+                <h4>Deep Dive</h4>
+                <p class="mb-0">Análisis detallado</p>
+                <div class="icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+            <div class="dashboard-card-body">
+                <h5 class="dash-card-title">Análisis profundo</h5>
+                <p class="dash-card-text">
+                    Realice análisis detallados de los procesos de producción, identificando oportunidades de mejora y optimización.
+                </p>
+                <a href="{{ url_for('deep_dive') }}" class="dash-card-link">
+                    Acceder <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="dashboard-card shadow">
+            <div class="dashboard-card-header" style="background-color: var(--frito-lay-yellow); color: #333;">
+                <h4>Comisionamiento</h4>
+                <p class="mb-0">Gestión de líneas</p>
+                <div class="icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+            </div>
+            <div class="dashboard-card-body">
+                <h5 class="dash-card-title">Comisionamiento de líneas</h5>
+                <p class="dash-card-text">
+                    Gestione el proceso de comisionamiento de nuevas líneas de producción para bolsas de Frito-Lay.
+                </p>
+                <a href="{{ url_for('comicionamiento') }}" class="dash-card-link">
+                    Acceder <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="dashboard-card shadow">
+            <div class="dashboard-card-header" style="background-color: #673AB7;">
+                <h4>Análisis Avanzado</h4>
+                <p class="mb-0">Análisis y métricas</p>
+                <div class="icon">
+                    <i class="fas fa-analytics"></i>
+                </div>
+            </div>
+            <div class="dashboard-card-body">
+                <h5 class="dash-card-title">Deep Dive Integral</h5>
+                <p class="dash-card-text">
+                    Acceda a análisis detallados, incluyendo eficiencia de empaque, métricas DEM, balance de línea y más.
+                </p>
+                <a href="{{ url_for('deep_dive') }}" class="dash-card-link">
+                    Acceder <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if session.get('role') == 'admin' %}
+<div class="row mt-3">
+    <div class="col-12">
+        <h4 class="mb-3 text-primary"><i class="fas fa-cogs me-2"></i>Administración</h4>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-users text-primary me-2"></i>Usuarios
+                </h5>
+                <p class="card-text">Gestione los usuarios del sistema, asignando roles y permisos.</p>
+                <a href="{{ url_for('admin_users') }}" class="btn btn-pepsico btn-sm">Administrar</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-building text-primary me-2"></i>Unidades de Negocio
+                </h5>
+                <p class="card-text">Configure las unidades de negocio y sus respectivas plantas.</p>
+                <a href="{{ url_for('admin_business_units') }}" class="btn btn-pepsico btn-sm">Administrar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Estadísticas rápidas -->
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Estadísticas Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                        <div class="p-3 bg-light rounded text-center">
+                            <h3 class="text-primary">{{ '0' }}</h3>
+                            <p class="mb-0 text-muted">Líneas en comisionamiento</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                        <div class="p-3 bg-light rounded text-center">
+                            <h3 class="text-success">{{ '0' }}</h3>
+                            <p class="mb-0 text-muted">Líneas completadas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+                        <div class="p-3 bg-light rounded text-center">
+                            <h3 class="text-info">{{ '0' }}</h3>
+                            <p class="mb-0 text-muted">Ejercicios realizados</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-sm-6">
+                        <div class="p-3 bg-light rounded text-center">
+                            <h3 class="text-warning">{{ '0' }}%</h3>
+                            <p class="mb-0 text-muted">Eficiencia promedio</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Últimas actividades -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Actividad Reciente</h5>
+                <button class="btn btn-sm btn-pepsico-secondary">Ver todas</button>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <div>
+                            <h6 class="mb-1">Sistema inicializado</h6>
+                            <small class="text-muted">Bienvenido al sistema de comisionamiento</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">Ahora</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Código adicional específico para el dashboard si es necesario
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Dashboard cargado');
+        
+        // Aquí puedes añadir código para gráficos o funcionalidades específicas del dashboard
+    });
+</script>
+{% endblock %}
