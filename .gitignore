@@ -1,0 +1,67 @@
+# Entorno virtual
+venv/
+env/
+ENV/
+
+# Base de datos
+instance/app.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de configuración local
+.env
+.flaskenv
+.env.*
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Logs y archivos temporales
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tmp
+*.bak
+*.swp
+
+# Archivos de sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Entornos de desarrollo
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Archivos específicos del proyecto
+.coverage
+htmlcov/
+.pytest_cache/
