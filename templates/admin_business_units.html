@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Unidades de Negocio - PepsiCo{% endblock %}
+
+{% block page_title %}Unidades de Negocio{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .admin-container {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .admin-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .admin-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+    }
+    
+    .bu-form-container {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .bu-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        background-color: rgba(0, 87, 168, 0.1);
+        color: var(--pepsico-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+    }
+    
+    .bu-table {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .bu-table thead {
+        background-color: var(--pepsico-blue);
+        color: white;
+    }
+    
+    .bu-table th {
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .bu-actions .btn {
+        border-radius: 50px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .form-floating > .form-control {
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+    
+    .form-floating > label {
+        padding: 1rem 0.75rem;
+    }
+    
+    .form-submit-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+    
+    .stats-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 50px;
+        margin-left: 0.5rem;
+        background-color: rgba(0, 87, 168, 0.1);
+        color: var(--pepsico-blue);
+    }
+    
+    .bu-card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+        background-color: white;
+    }
+    
+    .bu-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .bu-card-header {
+        background-color: var(--pepsico-blue);
+        color: white;
+        padding: 1.5rem;
+    }
+    
+    .bu-card-body {
+        padding: 1.5rem;
+    }
+    
+    .bu-card-stats {
+        display: flex;
+        margin-top: 1rem;
+    }
+    
+    .bu-stat {
+        flex: 1;
+        text-align: center;
+        padding: 0.5rem;
+    }
+    
+    .bu-stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: var(--pepsico-blue);
+    }
+    
+    .bu-stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .bu-card-footer {
+        background-color: #f8f9fa;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h4 class="admin-title"><i class="fas fa-building me-2"></i>Unidades de Negocio</h4>
+        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#buForm" aria-expanded="false" aria-controls="buForm">
+            <i class="fas fa-plus-circle me-1"></i> Nueva Unidad
+        </button>
+    </div>
+    
+    <div class="collapse mb-4" id="buForm">
+        <div class="bu-form-container">
+            <h5 class="mb-3"><i class="fas fa-plus-square me-2"></i>Agregar Nueva Unidad de Negocio</h5>
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Nombre de la Unidad de Negocio" required>
+                            <label for="name">Nombre de la Unidad de Negocio</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-submit-container">
+                    <button type="button" class="btn btn-light me-2" data-bs-toggle="collapse" data-bs-target="#buForm">Cancelar</button>
+                    <button type="submit" class="btn btn-pepsico">
+                        <i class="fas fa-plus me-1"></i> Crear Unidad
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        {% for bu in bus %}
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="bu-card">
+                <div class="bu-card-header">
+                    <h5 class="mb-0">{{ bu.name }}</h5>
+                    <div class="small opacity-75">ID: {{ bu.id }}</div>
+                </div>
+                <div class="bu-card-body">
+                    <div class="bu-card-stats">
+                        <div class="bu-stat">
+                            <div class="bu-stat-value">{{ bu.plantas|length }}</div>
+                            <div class="bu-stat-label">Plantas</div>
+                        </div>
+                        <div class="bu-stat">
+                            <div class="bu-stat-value">{{ bu.sabores|length }}</div>
+                            <div class="bu-stat-label">Sabores</div>
+                        </div>
+                        <div class="bu-stat">
+                            {% set total_lineas = 0 %}
+                            {% for planta in bu.plantas %}
+                                {% set total_lineas = total_lineas + planta.lineas|length %}
+                            {% endfor %}
+                            <div class="bu-stat-value">{{ total_lineas }}</div>
+                            <div class="bu-stat-label">Líneas</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bu-card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin_plantas', bu_id=bu.id) }}" class="btn btn-sm btn-pepsico">
+                            <i class="fas fa-industry me-1"></i> Plantas
+                        </a>
+                        <a href="{{ url_for('admin_sabores', bu_id=bu.id) }}" class="btn btn-sm btn-pepsico-secondary">
+                            <i class="fas fa-cookie-bite me-1"></i> Sabores
+                        </a>
+                        <button class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <h5 class="mb-3"><i class="fas fa-list me-2"></i>Lista Detallada</h5>
+    <div class="table-responsive">
+        <table class="table bu-table" id="buTable">
+            <thead>
+                <tr>
+                    <th width="10%">ID</th>
+                    <th width="35%">Nombre</th>
+                    <th width="15%">Plantas</th>
+                    <th width="15%">Sabores</th>
+                    <th width="25%">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bu in bus %}
+                <tr>
+                    <td>{{ bu.id }}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="bu-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">{{ bu.name }}</div>
+                                <div class="small text-muted">Unidad de Negocio</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="stats-badge">{{ bu.plantas|length }}</span></td>
+                    <td><span class="stats-badge">{{ bu.sabores|length }}</span></td>
+                    <td class="bu-actions">
+                        <a href="{{ url_for('admin_plantas', bu_id=bu.id) }}" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-industry"></i> Plantas
+                        </a>
+                        <a href="{{ url_for('admin_sabores', bu_id=bu.id) }}" class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-cookie-bite"></i> Sabores
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar DataTable si existe jQuery y DataTables
+        if (typeof $ !== 'undefined' && $.fn.DataTable) {
+            $('#buTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
+                },
+                "pageLength": 10
+            });
+        }
+    });
+</script>
+{% endblock %}

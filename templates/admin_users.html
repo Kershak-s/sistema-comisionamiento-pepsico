@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}Administración de Usuarios - PepsiCo{% endblock %}
+
+{% block page_title %}Administración de Usuarios{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .admin-container {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .admin-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .admin-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+    }
+    
+    .user-form-container {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .user-avatar-lg {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--pepsico-blue);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+    
+    .user-table {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .user-table thead {
+        background-color: var(--pepsico-blue);
+        color: white;
+    }
+    
+    .user-table th {
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .user-actions .btn {
+        border-radius: 50px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .role-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    
+    .role-badge.admin {
+        background-color: rgba(var(--pepsico-red-rgb), 0.1);
+        color: var(--pepsico-red);
+    }
+    
+    .role-badge.user {
+        background-color: rgba(0, 87, 168, 0.1);
+        color: var(--pepsico-blue);
+    }
+    
+    .form-floating > .form-control {
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+    
+    .form-floating > label {
+        padding: 1rem 0.75rem;
+    }
+    
+    .form-submit-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h4 class="admin-title"><i class="fas fa-users-cog me-2"></i>Gestión de Usuarios</h4>
+        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#userForm" aria-expanded="false" aria-controls="userForm">
+            <i class="fas fa-plus-circle me-1"></i> Nuevo Usuario
+        </button>
+    </div>
+    
+    <div class="collapse mb-4" id="userForm">
+        <div class="user-form-container">
+            <h5 class="mb-3"><i class="fas fa-user-plus me-2"></i>Agregar Nuevo Usuario</h5>
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Nombre de usuario" required>
+                            <label for="username">Nombre de usuario</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+                            <label for="password">Contraseña</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-floating">
+                            <select class="form-select" id="role" name="role">
+                                <option value="user">Usuario</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                            <label for="role">Rol del usuario</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-submit-container">
+                    <button type="button" class="btn btn-light me-2" data-bs-toggle="collapse" data-bs-target="#userForm">Cancelar</button>
+                    <button type="submit" class="btn btn-pepsico">
+                        <i class="fas fa-user-plus me-1"></i> Crear Usuario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <div class="input-group">
+            <span class="input-group-text bg-light border-0">
+                <i class="fas fa-search"></i>
+            </span>
+            <input type="text" class="form-control bg-light border-0" id="userSearch" placeholder="Buscar usuario...">
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table user-table" id="usersTable">
+            <thead>
+                <tr>
+                    <th width="10%">ID</th>
+                    <th width="15%">Avatar</th>
+                    <th width="30%">Usuario</th>
+                    <th width="20%">Rol</th>
+                    <th width="25%">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar-lg">
+                                {{ user.username[0] | upper }}
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ user.username }}</td>
+                    <td>
+                        <span class="role-badge {{ user.role }}">{{ user.role }}</span>
+                    </td>
+                    <td class="user-actions">
+                        <button class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Búsqueda en tabla de usuarios
+        const userSearch = document.getElementById('userSearch');
+        userSearch.addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#usersTable tbody tr');
+            
+            tableRows.forEach(row => {
+                const username = row.cells[2].textContent.toLowerCase();
+                const role = row.cells[3].textContent.toLowerCase();
+                
+                if (username.includes(searchValue) || role.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Inicializar DataTable si existe jQuery y DataTables
+        if (typeof $ !== 'undefined' && $.fn.DataTable) {
+            $('#usersTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
+                },
+                "pageLength": 10,
+                "dom": '<"top"f>rt<"bottom"ip>',
+                "searching": false
+            });
+        }
+    });
+</script>
+{% endblock %}
