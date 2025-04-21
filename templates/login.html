@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión | Sistema de Comisionamiento PepsiCo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <img src="{{ url_for('static', filename='img/pepsico-logo-white.png') }}" alt="PepsiCo Logo" class="img-fluid mb-3" style="max-height: 50px;">
+                    <h4 class="mb-0">Sistema de Comisionamiento</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <div class="mb-4">
+                            <label for="username" class="form-label">Usuario</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" required autofocus>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">© {{ now.year }} PepsiCo, Inc. Todos los derechos reservados.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Remover la barra lateral en la página de login
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('.main-content').classList.add('col-12');
+        document.querySelector('.main-content').classList.remove('col-md-10');
+    });
+</script>
+{% endblock %}
