@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from models import db, User, BusinessUnit, Plant, Line, Flavor, EmpaqueExercise, DmeExercise
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tu_clave_secreta'
@@ -21,6 +22,8 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 db.init_app(app)
+
+migrate = Migrate(app, db)
 
 # Función para verificar si un archivo tiene una extensión permitida
 def allowed_file(filename):

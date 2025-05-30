@@ -27,6 +27,7 @@ class Line(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     plant_id = db.Column(db.Integer, db.ForeignKey('plant.id'), nullable=False)
+    pipes = db.Column(db.Integer, nullable=True)
 
 class Flavor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
