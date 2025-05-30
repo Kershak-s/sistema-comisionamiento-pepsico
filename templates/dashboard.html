@@ -62,27 +62,6 @@
             </div>
         </div>
     </div>
-    
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="dashboard-card shadow">
-            <div class="dashboard-card-header" style="background-color: #673AB7;">
-                <h4>Análisis Avanzado</h4>
-                <p class="mb-0">Análisis y métricas</p>
-                <div class="icon">
-                    <i class="fas fa-analytics"></i>
-                </div>
-            </div>
-            <div class="dashboard-card-body">
-                <h5 class="dash-card-title">Deep Dive Integral</h5>
-                <p class="dash-card-text">
-                    Acceda a análisis detallados, incluyendo eficiencia de empaque, métricas DEM, balance de línea y más.
-                </p>
-                <a href="{{ url_for('deep_dive') }}" class="dash-card-link">
-                    Acceder <i class="fas fa-arrow-right ms-1"></i>
-                </a>
-            </div>
-        </div>
-    </div>
 </div>
 
 {% if session.get('role') == 'admin' %}
