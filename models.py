@@ -51,6 +51,7 @@ class DmeExercise(db.Model):
     bu_id = db.Column(db.Integer, db.ForeignKey('business_unit.id'), nullable=False)
     plant_id = db.Column(db.Integer, db.ForeignKey('plant.id'), nullable=False)
     linea = db.Column(db.String(150), nullable=False)
+    nombre = db.Column(db.String(150), nullable=True)  # Nuevo campo para el nombre
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     data = db.Column(db.Text, nullable=False, default='{}')  # Guardará las capturas como JSON
