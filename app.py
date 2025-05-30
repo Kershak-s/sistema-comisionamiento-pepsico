@@ -666,9 +666,13 @@ def new_dme_capture(exercise_id):
         return redirect(url_for('login'))
     
     exercise = DmeExercise.query.get_or_404(exercise_id)
-    
+    # Obtener la línea y su cantidad de pipes
+    from models import Line
+    linea_obj = Line.query.filter_by(name=exercise.linea, plant_id=exercise.plant_id).first()
+    pipes = linea_obj.pipes if linea_obj else 0
+
     if request.method == 'GET':
-        return render_template('new_dme_capture.html', exercise=exercise)
+        return render_template('new_dme_capture.html', exercise=exercise, pipes=pipes)
     
     # Si es POST, procesamos la nueva captura
     maquina = request.form.get('maquina')
@@ -995,6 +999,30 @@ def delete_capture_eff_empaque(exercise_id):
         return jsonify(success=True)
     else:
         return jsonify(success=False, message="Índice fuera de rango"), 400
+
+@app.route('/dme_exercises/<int:exercise_id>/captures/<capture_id>/delete', methods=['POST'])
+def delete_dme_capture(exercise_id, capture_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    exercise = DmeExercise.query.get_or_404(exercise_id)
+    import json
+    data = json.loads(exercise.data)
+    # Buscar y eliminar la captura
+    capturas = data.get("capturas", [])
+    nueva_lista = [c for c in capturas if str(c.get("id")) != str(capture_id)]
+    if len(nueva_lista) == len(capturas):
+        flash("Captura no encontrada")
+    else:
+        data["capturas"] = nueva_lista
+        exercise.data = json.dumps(data)
+        exercise.updated_at = datetime.now()
+        try:
+            db.session.commit()
+            flash("Captura eliminada exitosamente")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error al eliminar la captura: {str(e)}")
+    return redirect(url_for('view_dme_exercise', exercise_id=exercise_id))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')

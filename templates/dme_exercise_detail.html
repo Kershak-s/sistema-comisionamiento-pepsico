@@ -250,6 +250,11 @@
                         <a href="{{ url_for('view_dme_capture', exercise_id=exercise.id, capture_id=captura.id) }}" class="btn btn-primary w-100">
                             <i class="fas fa-eye me-2"></i>Ver Detalles
                         </a>
+                        <form method="POST" action="{{ url_for('delete_dme_capture', exercise_id=exercise.id, capture_id=captura.id) }}" style="margin-top: 0.5rem;" onsubmit="return confirm('¿Seguro que deseas eliminar esta captura?');">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-trash-alt me-2"></i>Eliminar Captura
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
