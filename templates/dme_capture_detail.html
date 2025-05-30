@@ -279,28 +279,33 @@
             <div class="modal-body">
                 <form action="{{ url_for('add_dme_defect', exercise_id=exercise.id, capture_id=captura.id) }}" method="POST" id="defectForm" enctype="multipart/form-data">
                     <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="tipo_defecto" class="form-label">Tipo de Defecto<span class="required-indicator">*</span></label>
-                            <select class="form-select" id="tipo_defecto" name="tipo_defecto" required>
-                                <option value="" selected disabled>Seleccionar tipo de defecto</option>
-                                {% for tipo in defect_types %}
-                                <option value="{{ tipo }}">{{ tipo }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="cantidad" class="form-label">Cantidad de Defectos<span class="required-indicator">*</span></label>
-                            <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" value="1" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Fecha y Hora</label>
-                            <input type="text" class="form-control" value="{{ now.strftime('%d/%m/%Y %H:%M') }}" readonly disabled>
-                            <small class="form-text text-muted">Se registrará automáticamente</small>
-                        </div>
-                    </div>
+    <div class="col-md-12">
+        <label for="tipo_defecto" class="form-label">Tipo de Defecto<span class="required-indicator">*</span></label>
+        <select class="form-select" id="tipo_defecto" name="tipo_defecto" required>
+            <option value="" selected disabled>Seleccionar tipo de defecto</option>
+            {% for tipo in defect_types %}
+            <option value="{{ tipo }}">{{ tipo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <label for="cantidad" class="form-label">Cantidad de Defectos<span class="required-indicator">*</span></label>
+        <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" value="1" required>
+    </div>
+    <div class="col-md-4">
+        <label for="hora_captura" class="form-label">Hora de Captura<span class="required-indicator">*</span></label>
+        <input type="number" class="form-control" id="hora_captura" name="hora_captura" min="1" max="24" value="1" required>
+        <small class="form-text text-muted">Ingrese la hora (1 a 24) en la que ocurrió el defecto</small>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Fecha y Hora</label>
+        <input type="text" class="form-control" value="{{ now.strftime('%d/%m/%Y %H:%M') }}" readonly disabled>
+        <small class="form-text text-muted">Se registrará automáticamente</small>
+    </div>
+</div>
                     
                     <div class="mb-3">
                         <label for="comentario" class="form-label">Comentarios</label>

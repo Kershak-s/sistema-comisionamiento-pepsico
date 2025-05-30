@@ -796,6 +796,16 @@ def add_dme_defect(exercise_id, capture_id):
     hora_actual = datetime.now()
     diferencia_horas = int((hora_actual - hora_inicio).total_seconds() / 3600)
     
+    hora_captura = request.form.get('hora_captura', type=int)
+    if hora_captura and 1 <= hora_captura <= 24:
+        hora_relativa = f"Hora {hora_captura}"
+    else:
+        # Si no se envía, calcular como antes
+        hora_inicio = datetime.fromisoformat(data["capturas"][capture_index]["fecha_hora"])
+        hora_actual = datetime.now()
+        diferencia_horas = int((hora_actual - hora_inicio).total_seconds() / 3600)
+        hora_relativa = f"Hora {diferencia_horas}"
+
     # Crear nuevo defecto
     nuevo_defecto = {
         "id": str(datetime.now().timestamp()),
@@ -803,7 +813,7 @@ def add_dme_defect(exercise_id, capture_id):
         "cantidad": cantidad,
         "comentario": comentario,
         "fecha_hora": datetime.now().isoformat(),
-        "hora_relativa": f"Hora {diferencia_horas}",
+        "hora_relativa": hora_relativa,
         "imagen": imagen_url
     }
     
