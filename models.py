@@ -33,10 +33,6 @@ class Flavor(db.Model):
     name = db.Column(db.String(150), nullable=False)
     bu_id = db.Column(db.Integer, db.ForeignKey('business_unit.id'), nullable=False)
 
-
-
-
-
 class EmpaqueExercise(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     bu_id = db.Column(db.Integer, db.ForeignKey('business_unit.id'), nullable=False)
@@ -48,3 +44,15 @@ class EmpaqueExercise(db.Model):
 
     bu = db.relationship('BusinessUnit', primaryjoin='EmpaqueExercise.bu_id == BusinessUnit.id', lazy=True)
     plant = db.relationship('Plant', primaryjoin='EmpaqueExercise.plant_id == Plant.id', lazy=True)
+
+class DmeExercise(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    bu_id = db.Column(db.Integer, db.ForeignKey('business_unit.id'), nullable=False)
+    plant_id = db.Column(db.Integer, db.ForeignKey('plant.id'), nullable=False)
+    linea = db.Column(db.String(150), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    data = db.Column(db.Text, nullable=False, default='{}')  # Guardará las capturas como JSON
+
+    bu = db.relationship('BusinessUnit', primaryjoin='DmeExercise.bu_id == BusinessUnit.id', lazy=True)
+    plant = db.relationship('Plant', primaryjoin='DmeExercise.plant_id == Plant.id', lazy=True)

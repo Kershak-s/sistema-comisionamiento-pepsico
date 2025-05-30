@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Ejercicio DME - PepsiCo{% endblock %}
+
+{% block page_title %}Ejercicio DME #{{ exercise.id }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .exercise-header {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .exercise-info {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    
+    .info-item {
+        flex: 1 1 200px;
+        margin-bottom: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .btn-action {
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    
+    .captures-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .capture-card {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .capture-card:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+    }
+    
+    .capture-header {
+        background-color: var(--pepsico-blue);
+        color: white;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .capture-body {
+        padding: 1.5rem;
+    }
+    
+    .capture-info {
+        margin-bottom: 1rem;
+    }
+    
+    .capture-info-item {
+        display: flex;
+        margin-bottom: 0.5rem;
+    }
+    
+    .capture-info-item i {
+        width: 25px;
+        color: var(--pepsico-blue);
+        margin-right: 0.5rem;
+    }
+    
+    .defects-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .defect-count {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--pepsico-blue);
+    }
+    
+    .no-captures {
+        text-align: center;
+        padding: 3rem 1rem;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .no-captures i {
+        font-size: 3rem;
+        color: #adb5bd;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Encabezado del Ejercicio -->
+<div class="exercise-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">
+            <i class="fas fa-search-plus me-2"></i>
+            Ejercicio DME #{{ exercise.id }}
+        </h4>
+        <a href="{{ url_for('dme_exercises') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Volver
+        </a>
+    </div>
+    
+    <div class="exercise-info">
+        <div class="info-item">
+            <div class="info-label">Unidad de Negocio</div>
+            <div class="info-value">{{ exercise.bu.name }}</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Planta</div>
+            <div class="info-value">{{ exercise.plant.name }}</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Línea</div>
+            <div class="info-value">{{ exercise.linea }}</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Fecha de Creación</div>
+            <div class="info-value">{{ exercise.created_at.strftime('%d/%m/%Y %H:%M') }}</div>
+        </div>
+    </div>
+    
+    <!-- Resumen de capturas y defectos -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card bg-light border-0 h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-primary text-white p-3 me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="fas fa-camera fa-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ data.capturas|length }}</h3>
+                        <p class="text-muted mb-0">Capturas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-light border-0 h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-warning text-dark p-3 me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="fas fa-exclamation-triangle fa-lg"></i>
+                    </div>
+                    <div>
+                        {% set total_defects = 0 %}
+                        {% for captura in data.capturas|default([]) %}
+                            {% if captura.defectos is defined %}
+                                {% set total_defects = total_defects + captura.defectos|length %}
+                            {% endif %}
+                        {% endfor %}
+                        <h3 class="mb-0">{{ total_defects }}</h3>
+                        <p class="text-muted mb-0">Defectos registrados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <hr>
+    
+    <div class="text-end">
+        <a href="{{ url_for('view_dme_captures', exercise_id=exercise.id) }}" class="btn btn-action btn-primary me-2">
+            <i class="fas fa-clock me-2"></i>Ver por Horas
+        </a>
+        <a href="{{ url_for('new_dme_capture', exercise_id=exercise.id) }}" class="btn btn-action btn-frito-lay">
+            <i class="fas fa-plus-circle me-2"></i>Nueva Captura
+        </a>
+    </div>
+</div>
+
+<!-- Contenedor de Capturas -->
+<div class="captures-container">
+    <h5 class="mb-4"><i class="fas fa-camera me-2"></i>Capturas Realizadas</h5>
+    
+    {% if data.capturas and data.capturas|length > 0 %}
+        <div class="row">
+            {% for captura in data.capturas %}
+            <div class="col-lg-6 mb-4">
+                <div class="capture-card">
+                    <div class="capture-header">
+                        <h6 class="mb-0">Captura {{ loop.index }}</h6>
+                        <span class="badge bg-light text-dark">
+                            {{ captura.fecha_hora|fromiso|strftime('%d/%m/%Y %H:%M') }}
+                        </span>
+                    </div>
+                    <div class="capture-body">
+                        <div class="capture-info">
+                            <div class="capture-info-item">
+                                <i class="fas fa-cog"></i>
+                                <span><strong>Máquina:</strong> {{ captura.maquina }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="defects-summary">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <div class="defect-count">{{ captura.defectos|length }}</div>
+                                </div>
+                                <div class="col">
+                                    <div class="defect-label">Defectos registrados</div>
+                                    <div class="progress mt-2" style="height: 6px;">
+                                        <div class="progress-bar bg-{{ 'success' if captura.defectos|length == 0 else 'warning' if captura.defectos|length < 5 else 'danger' }}" 
+                                             role="progressbar" 
+                                             style="width: {{ (captura.defectos|length * 10) if captura.defectos|length * 10 <= 100 else 100 }}%" 
+                                             aria-valuenow="{{ captura.defectos|length }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="10"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="{{ url_for('view_dme_capture', exercise_id=exercise.id, capture_id=captura.id) }}" class="btn btn-primary w-100">
+                            <i class="fas fa-eye me-2"></i>Ver Detalles
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-captures">
+            <i class="fas fa-camera-retro d-block"></i>
+            <h5>No hay capturas registradas</h5>
+            <p class="text-muted">Registre una nueva captura para comenzar a monitorear defectos.</p>
+            <a href="{{ url_for('new_dme_capture', exercise_id=exercise.id) }}" class="btn btn-frito-lay mt-3">
+                <i class="fas fa-plus-circle me-2"></i>Nueva Captura
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DME Exercise Detail page loaded');
+    });
+</script>
+{% endblock %}

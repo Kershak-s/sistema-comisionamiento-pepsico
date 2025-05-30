@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Captura DME - PepsiCo{% endblock %}
+
+{% block page_title %}Captura DME - Ejercicio #{{ exercise.id }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .capture-header {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .exercise-info {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    
+    .info-item {
+        flex: 1 1 200px;
+        margin-bottom: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .btn-action {
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    
+    .defects-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+    
+    .modal-title {
+        color: var(--pepsico-blue);
+    }
+    
+    .defect-badge {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .defect-card {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .defect-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .defect-header {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .defect-body {
+        padding: 1.5rem;
+    }
+    
+    .defect-info-item {
+        margin-bottom: 0.75rem;
+    }
+    
+    .defect-info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+    
+    .defect-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+    
+    .no-defects {
+        text-align: center;
+        padding: 3rem 1rem;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .no-defects i {
+        font-size: 3rem;
+        color: #adb5bd;
+        margin-bottom: 1rem;
+    }
+    
+    .form-title {
+        margin-bottom: 1.5rem;
+        color: var(--pepsico-blue);
+        font-weight: 600;
+    }
+    
+    .required-indicator {
+        color: #dc3545;
+        margin-left: 3px;
+    }
+    
+    .defect-image {
+        margin-top: 1rem;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        overflow: hidden;
+    }
+    
+    .defect-image img {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Encabezado de la Captura -->
+<div class="capture-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">
+            <i class="fas fa-camera me-2"></i>
+            Captura DME - Máquina: {{ captura.maquina }}
+        </h4>
+        <a href="{{ url_for('view_dme_exercise', exercise_id=exercise.id) }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Volver al Ejercicio
+        </a>
+    </div>
+    
+    <div class="exercise-info">
+        <div class="info-item">
+            <div class="info-label">Unidad de Negocio</div>
+            <div class="info-value">{{ exercise.bu.name }}</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Planta</div>
+            <div class="info-value">{{ exercise.plant.name }}</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Línea</div>
+            <div class="info-value">{{ exercise.linea }}</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Fecha y Hora de Captura</div>
+            <div class="info-value">{{ captura.fecha_hora|fromiso|strftime('%d/%m/%Y %H:%M') }}</div>
+        </div>
+    </div>
+    
+    <hr>
+    
+    <div class="text-center">
+        <h5 class="mb-3">FORMATO DE ANÁLISIS DE "DME"</h5>
+        <p class="text-muted mb-1">{{ exercise.bu.name }} - {{ exercise.plant.name }} - {{ exercise.linea }} - {{ captura.maquina }}</p>
+        <p class="text-muted"><strong>DME #{{ exercise.id }}</strong> ({{ exercise.created_at.strftime('%d/%m/%Y') }})</p>
+    </div>
+    
+    <div class="text-end mt-3">
+        <button type="button" class="btn btn-action btn-frito-lay" data-bs-toggle="modal" data-bs-target="#addDefectModal">
+            <i class="fas fa-plus-circle me-2"></i>Agregar Defecto
+        </button>
+    </div>
+</div>
+
+<!-- Contenedor de Defectos -->
+<div class="defects-container">
+    <h5 class="mb-4"><i class="fas fa-exclamation-triangle me-2"></i>Defectos Registrados</h5>
+    
+    {% if captura.defectos and captura.defectos|length > 0 %}
+        {% for defecto in captura.defectos|sort(attribute='fecha_hora', reverse=true) %}
+        <div class="defect-card">
+            <div class="defect-header">
+                <h6 class="mb-0">{{ defecto.tipo }}</h6>
+                <span class="badge bg-primary">{{ defecto.hora_relativa }}</span>
+            </div>
+            <div class="defect-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="defect-info-item">
+                            <div class="defect-info-label">Cantidad</div>
+                            <div><strong>{{ defecto.cantidad }}</strong></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="defect-info-item">
+                            <div class="defect-info-label">Fecha y Hora</div>
+                            <div><strong>{{ defecto.fecha_hora|fromiso|strftime('%d/%m/%Y %H:%M') }}</strong></div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if defecto.comentario %}
+                <div class="defect-info-item mt-2">
+                    <div class="defect-info-label">Comentarios</div>
+                    <div>{{ defecto.comentario }}</div>
+                </div>
+                {% endif %}
+                
+                {% if defecto.imagen %}
+                <div class="defect-info-item mt-3">
+                    <div class="defect-info-label">Imagen</div>
+                    <div class="defect-image">
+                        <img src="{{ defecto.imagen }}" alt="Imagen del defecto" class="img-fluid">
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="defect-actions">
+                    <form action="{{ url_for('delete_dme_defect', exercise_id=exercise.id, capture_id=captura.id, defect_id=defecto.id) }}" method="POST" onsubmit="return confirm('¿Está seguro de eliminar este defecto?')">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash-alt me-1"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-defects">
+            <i class="fas fa-exclamation-circle d-block"></i>
+            <h5>No hay defectos registrados</h5>
+            <p class="text-muted">Registre un nuevo defecto para comenzar el monitoreo.</p>
+            <button type="button" class="btn btn-frito-lay mt-3" data-bs-toggle="modal" data-bs-target="#addDefectModal">
+                <i class="fas fa-plus-circle me-2"></i>Agregar Defecto
+            </button>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal para Agregar Defecto -->
+<div class="modal fade" id="addDefectModal" tabindex="-1" aria-labelledby="addDefectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDefectModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>Agregar Nuevo Defecto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('add_dme_defect', exercise_id=exercise.id, capture_id=captura.id) }}" method="POST" id="defectForm" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="tipo_defecto" class="form-label">Tipo de Defecto<span class="required-indicator">*</span></label>
+                            <select class="form-select" id="tipo_defecto" name="tipo_defecto" required>
+                                <option value="" selected disabled>Seleccionar tipo de defecto</option>
+                                {% for tipo in defect_types %}
+                                <option value="{{ tipo }}">{{ tipo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="cantidad" class="form-label">Cantidad de Defectos<span class="required-indicator">*</span></label>
+                            <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" value="1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha y Hora</label>
+                            <input type="text" class="form-control" value="{{ now.strftime('%d/%m/%Y %H:%M') }}" readonly disabled>
+                            <small class="form-text text-muted">Se registrará automáticamente</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="comentario" class="form-label">Comentarios</label>
+                        <textarea class="form-control" id="comentario" name="comentario" rows="3" placeholder="Agregue comentarios adicionales sobre el defecto..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="imagen" class="form-label">Imagen del defecto</label>
+                        <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                        <small class="form-text text-muted">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="defectForm" class="btn btn-frito-lay">
+                    <i class="fas fa-check me-1"></i> Guardar Defecto
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DME Capture Detail page loaded');
+        
+        // Vista previa de la imagen
+        const imagenInput = document.getElementById('imagen');
+        imagenInput.onchange = function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (document.getElementById('preview-container')) {
+                        document.getElementById('preview-img').src = e.target.result;
+                    } else {
+                        const previewContainer = document.createElement('div');
+                        previewContainer.id = 'preview-container';
+                        previewContainer.className = 'mt-3 p-2 border rounded';
+                        
+                        const previewTitle = document.createElement('p');
+                        previewTitle.className = 'mb-2 text-muted';
+                        previewTitle.textContent = 'Vista previa:';
+                        
+                        const previewImg = document.createElement('img');
+                        previewImg.id = 'preview-img';
+                        previewImg.src = e.target.result;
+                        previewImg.className = 'img-fluid rounded';
+                        previewImg.style.maxHeight = '200px';
+                        
+                        previewContainer.appendChild(previewTitle);
+                        previewContainer.appendChild(previewImg);
+                        
+                        imagenInput.parentNode.appendChild(previewContainer);
+                    }
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        };
+    });
+</script>
+{% endblock %}

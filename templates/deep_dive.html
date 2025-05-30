@@ -90,51 +90,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="metrics-container">
-            <h4 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>Métricas Clave</h4>
-            <div class="row">
-                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
-                    <div class="metric-card">
-                        <div class="icon-wrapper bg-primary text-white mb-2" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%;">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <div class="metric-value text-primary">85%</div>
-                        <div class="metric-label">Eficiencia Promedio</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
-                    <div class="metric-card">
-                        <div class="icon-wrapper bg-success text-white mb-2" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%;">
-                            <i class="fas fa-weight"></i>
-                        </div>
-                        <div class="metric-value text-success">98.2%</div>
-                        <div class="metric-label">Precisión de Peso</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
-                    <div class="metric-card">
-                        <div class="icon-wrapper bg-info text-white mb-2" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%;">
-                            <i class="fas fa-box"></i>
-                        </div>
-                        <div class="metric-value text-info">142</div>
-                        <div class="metric-label">Unidades/Minuto</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="metric-card">
-                        <div class="icon-wrapper bg-warning text-white mb-2" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="metric-value text-warning">1.4%</div>
-                        <div class="metric-label">Tasa de Desperdicio</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <div class="row">
     <div class="col-lg-6 mb-4">
@@ -161,17 +117,17 @@
         <div class="deep-dive-card card">
             <div class="card-header d-flex align-items-center" style="background-color: #4CAF50;">
                 <div class="icon-wrapper me-3">
-                    <i class="fas fa-industry"></i>
+                    <i class="fas fa-search"></i>
                 </div>
                 <div>
-                    <h5 class="mb-1">DEM</h5>
-                    <p class="mb-0 small">Design Manufacturing Efficiency</p>
+                    <h5 class="mb-1">DME</h5>
+                    <p class="mb-0 small">Defect Monitoring Exercise</p>
                 </div>
             </div>
             <div class="card-body">
-                <p>Evalþe la eficiencia desde el diseño de manufactura, optimizando procesos desde su concepción para maximizar la producción.</p>
-                <a href="#" class="btn btn-success">
-                    <i class="fas fa-cogs me-2"></i> Analizar DEM
+                <p>Monitoree y analice los defectos en el proceso de producción, identificando áreas de mejora para reducir desperdicios y aumentar la calidad.</p>
+                <a href="{{ url_for('dme_exercises') }}" class="btn btn-success">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Analizar DME
                 </a>
             </div>
         </div>

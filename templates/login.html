@@ -1,54 +1,166 @@
-{% extends 'base.html' %}
-
-{% block title %}Iniciar Sesión | Sistema de Comisionamiento PepsiCo{% endblock %}
-
-{% block content %}
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center py-3">
-                    <img src="{{ url_for('static', filename='img/pepsico-logo-white.png') }}" alt="PepsiCo Logo" class="img-fluid mb-3" style="max-height: 50px;">
-                    <h4 class="mb-0">Sistema de Comisionamiento</h4>
-                </div>
-                <div class="card-body p-4">
-                    <form method="POST" action="{{ url_for('login') }}">
-                        <div class="mb-4">
-                            <label for="username" class="form-label">Usuario</label>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PepsiCo - Sistema de Comisionamiento</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --pepsico-blue: #0057a8;
+            --pepsico-light-blue: #0066cc;
+            --pepsico-red: #e00034;
+            --pepsico-gray: #f8f9fa;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            background-image: url('{{ url_for("static", filename="img/frito-lay-pattern.png") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-logo img {
+            max-width: 200px;
+        }
+        
+        .btn-pepsico {
+            background-color: var(--pepsico-blue);
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 5px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .btn-pepsico:hover {
+            background-color: var(--pepsico-light-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 87, 168, 0.2);
+        }
+        
+        .form-control:focus {
+            border-color: var(--pepsico-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 87, 168, 0.25);
+        }
+        
+        .input-group-text {
+            background-color: var(--pepsico-blue);
+            color: white;
+            border: none;
+        }
+        
+        .footer-text {
+            color: #6c757d;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .card-title {
+            color: var(--pepsico-blue);
+            font-weight: 600;
+        }
+        
+        .login-alert {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .product-image {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            max-width: 180px;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.3));
+        }
+        
+        @media (max-width: 768px) {
+            .product-image {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="login-container">
+                    <div class="login-logo">
+                        <img src="{{ url_for('static', filename='img/pepsico-logo.png') }}" alt="PepsiCo" onerror="this.src='https://www.pepsico.com/themes/custom/pepsi_co/logo.svg'">
+                    </div>
+                    
+                    <h4 class="card-title text-center mb-3">Sistema de Comisionamiento</h4>
+                    <h6 class="text-center mb-4 text-muted">Línea de Producción Frito-Lay</h6>
+                    
+                    {% with messages = get_flashed_messages() %}
+                      {% if messages %}
+                         <div class="alert alert-danger login-alert text-center" role="alert">
+                         {% for message in messages %}
+                            {{ message }}
+                         {% endfor %}
+                         </div>
+                      {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST">
+                        <div class="mb-3">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="username" name="username" required autofocus>
+                                <input type="text" name="username" class="form-control" placeholder="Usuario" required autofocus>
                             </div>
                         </div>
+                        
                         <div class="mb-4">
-                            <label for="password" class="form-label">Contraseña</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
                             </div>
                         </div>
+                        
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
-                            </button>
+                            <button type="submit" class="btn btn-pepsico">Iniciar Sesión</button>
                         </div>
                     </form>
-                </div>
-                <div class="card-footer bg-light text-center py-3">
-                    <small class="text-muted">© {{ now.year }} PepsiCo, Inc. Todos los derechos reservados.</small>
+                    
+                    <div class="footer-text">
+                        <p>© {{ now.year }} PepsiCo - Sistema de Comisionamiento</p>
+                        <p>Soporte técnico: <a href="mailto:soporte@pepsico.com">soporte@pepsico.com</a></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+    
+    <img src="{{ url_for('static', filename='img/frito-lay-bag.png') }}" alt="Frito-Lay" class="product-image" onerror="this.style.display='none'">
 
-{% block extra_js %}
-<script>
-    // Remover la barra lateral en la página de login
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('.main-content').classList.add('col-12');
-        document.querySelector('.main-content').classList.remove('col-md-10');
-    });
-</script>
-{% endblock %}
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

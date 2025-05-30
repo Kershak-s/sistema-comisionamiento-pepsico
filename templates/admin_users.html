@@ -177,7 +177,7 @@
             </thead>
             <tbody>
                 {% for user in users %}
-                <tr>
+                <tr data-user-id="{{ user.id }}" data-username="{{ user.username }}" data-role="{{ user.role }}">
                     <td>{{ user.id }}</td>
                     <td>
                         <div class="d-flex align-items-center">
@@ -191,12 +191,15 @@
                         <span class="role-badge {{ user.role }}">{{ user.role }}</span>
                     </td>
                     <td class="user-actions">
-                        <button class="btn btn-sm btn-outline-primary me-1">
+                        <button class="btn btn-sm btn-outline-primary me-1 edit-user-btn" type="button" data-bs-toggle="modal" data-bs-target="#editUserModal">
                             <i class="fas fa-edit"></i> Editar
                         </button>
-                        <button class="btn btn-sm btn-outline-danger">
-                            <i class="fas fa-trash-alt"></i> Eliminar
-                        </button>
+                        <form method="post" action="{{ url_for('admin_users_delete') }}" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -204,8 +207,43 @@
         </table>
     </div>
 </div>
-{% endblock %}
 
+<!-- Modal para editar usuario -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" id="editUserForm" action="{{ url_for('admin_users_edit') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel">Editar Usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="user_id" id="editUserId">
+          <div class="mb-3">
+            <label for="editUsername" class="form-label">Nombre de usuario</label>
+            <input type="text" class="form-control" id="editUsername" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="editPassword" class="form-label">Nueva contraseña (opcional)</label>
+            <input type="password" class="form-control" id="editPassword" name="password" placeholder="Dejar en blanco para no cambiar">
+          </div>
+          <div class="mb-3">
+            <label for="editRole" class="form-label">Rol</label>
+            <select class="form-select" id="editRole" name="role">
+              <option value="user">Usuario</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-pepsico">Guardar Cambios</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
 {% block extra_scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -238,6 +276,20 @@
                 "searching": false
             });
         }
+
+        // El formulario de edición debe enviar a /admin/users por POST
+        document.getElementById('editUserForm').action = "{{ url_for('admin_users_edit') }}";
+
+        // Rellenar el modal de edición con los datos del usuario
+        document.querySelectorAll('.edit-user-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const row = btn.closest('tr');
+                document.getElementById('editUserId').value = row.dataset.userId;
+                document.getElementById('editUsername').value = row.dataset.username;
+                document.getElementById('editRole').value = row.dataset.role;
+                document.getElementById('editPassword').value = '';
+            });
+        });
     });
 </script>
 {% endblock %}

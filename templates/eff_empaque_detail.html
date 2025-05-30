@@ -2,7 +2,7 @@
 
 {% block title %}Detalle de Eficiencia de Empaque - PepsiCo{% endblock %}
 
-{% block page_title %}Detalle de Ejercicio{% endblock %}
+{% block page_title %}Detalle de Eficiencia de Empaque{% endblock %}
 
 {% block extra_styles %}
 <style>
@@ -29,6 +29,38 @@
         color: var(--pepsico-blue);
     }
     
+    .detail-info {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .info-item {
+        background-color: white;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .info-label {
+        color: #6c757d;
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--pepsico-blue);
+    }
+    
     .back-link {
         color: var(--pepsico-blue);
         text-decoration: none;
@@ -43,74 +75,52 @@
         margin-right: 0.25rem;
     }
     
-    .exercise-summary {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .exercise-detail-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
-    }
-    
-    .exercise-detail-item {
-        background-color: white;
-        border-radius: 8px;
-        padding: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    
-    .item-label {
-        color: #6c757d;
-        font-size: 0.875rem;
-        margin-bottom: 0.25rem;
-    }
-    
-    .item-value {
-        font-weight: 500;
-        font-size: 1.1rem;
-    }
-    
     .detail-table {
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         border-radius: 8px;
         overflow: hidden;
     }
     
-    .detail-table th,
-    .detail-table td {
-        padding: 0.75rem 1rem;
-    }
-    
-    .detail-table thead {
+    .detail-table th {
         background-color: var(--pepsico-blue);
         color: white;
-    }
-    
-    .detail-table th {
         font-weight: 500;
         text-transform: uppercase;
         font-size: 0.8rem;
-        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+    
+    .data-section {
+        margin-bottom: 2rem;
+    }
+    
+    .data-section-title {
+        font-weight: 600;
+        color: var(--pepsico-blue);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
     }
     
     .metric-card {
-        background-color: white;
+        background: white;
         border-radius: 10px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        padding: 1.25rem;
-        margin-bottom: 1.5rem;
+        padding: 1.5rem;
         display: flex;
-        align-items: center;
+        flex-direction: column;
     }
     
     .metric-icon {
         width: 50px;
         height: 50px;
-        min-width: 50px;
         border-radius: 10px;
         background-color: rgba(0, 87, 168, 0.1);
         color: var(--pepsico-blue);
@@ -118,256 +128,300 @@
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
-        margin-right: 1rem;
-    }
-    
-    .metric-content {
-        flex: 1;
-    }
-    
-    .metric-value {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-        line-height: 1;
+        margin-bottom: 1rem;
     }
     
     .metric-label {
-        font-size: 0.875rem;
         color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
     }
     
-    .metric-change {
-        display: inline-flex;
-        align-items: center;
-        font-size: 0.875rem;
-        margin-left: 0.5rem;
-        font-weight: 500;
+    .metric-value {
+        font-weight: 600;
+        font-size: 1.8rem;
+        color: var(--pepsico-blue);
     }
     
-    .metric-change.positive {
+    .metric-card.efficiency .metric-icon {
+        background-color: rgba(25, 135, 84, 0.1);
         color: #198754;
     }
     
-    .metric-change.negative {
-        color: #dc3545;
+    .metric-card.efficiency .metric-value {
+        color: #198754;
     }
     
-    .chart-container {
-        background-color: white;
+    .metric-card.production .metric-icon {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+    }
+    
+    .metric-card.production .metric-value {
+        color: #0d6efd;
+    }
+    
+    .metric-card.improvement .metric-icon {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+    
+    .metric-card.improvement .metric-value {
+        color: #ffc107;
+    }
+    
+    .comparative-chart {
+        background: white;
         border-radius: 10px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .chart-title {
+        font-weight: 600;
+        color: var(--pepsico-blue);
+        margin-bottom: 1rem;
+    }
+    
+    .progress-container {
         margin-bottom: 1.5rem;
     }
     
-    .chart-container h5 {
-        margin-bottom: 1.5rem;
-        color: var(--pepsico-blue);
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+    
+    .progress-title {
+        font-weight: 500;
+    }
+    
+    .progress-value {
         font-weight: 600;
     }
     
-    .actions-bar {
-        display: flex;
-        margin-bottom: 1.5rem;
+    .progress {
+        height: 15px;
+        border-radius: 10px;
     }
     
     .progress-bar {
-        height: 6px;
-        border-radius: 3px;
-    }
-    
-    .progress {
-        height: 6px;
-        border-radius: 3px;
-        overflow: visible;
+        border-radius: 10px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
+{% set capture = data.captures[0] if data.captures is defined and data.captures|length > 0 else data %}
+
 <a href="{{ url_for('eff_empaque') }}" class="back-link">
-    <i class="fas fa-arrow-left"></i> Volver a Ejercicios
+    <i class="fas fa-arrow-left"></i> Volver a Lista de Ejercicios
 </a>
-
-<div class="actions-bar">
-    <a href="{{ url_for('excel_eff_empaque', exercise_id=exercise.id) }}" class="btn btn-pepsico me-2">
-        <i class="fas fa-edit me-1"></i> Editar Ejercicio
-    </a>
-    <!-- El botón de eliminar debe ser un formulario para usar método POST -->
-    <form action="{{ url_for('delete_eff_empaque', exercise_id=exercise.id) }}" method="post" style="display:inline;">
-        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('¿Está seguro que desea eliminar este ejercicio?')">
-            <i class="fas fa-trash-alt me-1"></i> Eliminar
-        </button>
-    </form>
-</div>
-
-<div class="exercise-summary">
-    <div class="row">
-        <div class="col-lg-8">
-            <h4 class="mb-2">Ejercicio #{{ exercise.id }}</h4>
-            <div class="d-flex flex-wrap mb-3">
-                <div class="badge bg-primary me-2 mb-1">{{ exercise.bu.name if exercise.bu else 'N/A' }}</div>
-                <div class="badge bg-success me-2 mb-1">{{ exercise.plant.name if exercise.plant else 'N/A' }}</div>
-                {% if exercise.linea %}
-                    <div class="badge bg-info me-2 mb-1">{{ exercise.linea }}</div>
-                {% endif %}
-                <div class="badge bg-secondary mb-1">
-                    <i class="fas fa-calendar me-1"></i> 
-                    {{ exercise.created_at.strftime('%d/%m/%Y %H:%M') }}
-                </div>
-            </div>
-            <p class="text-muted mb-0">Este ejercicio muestra los resultados de eficiencia de empaque para la planta seleccionada.</p>
-        </div>
-        <div class="col-lg-4 mt-3 mt-lg-0">
-            <div class="text-lg-end">
-                <div class="small text-muted mb-1">Eficiencia Promedio</div>
-                {% set eff_values = [] %}
-                {% for capture in data.captures %}
-                    {% if capture.eff_actual_empaque %}
-                        {% set eff_values = eff_values + [capture.eff_actual_empaque] %}
-                    {% endif %}
-                {% endfor %}
-                
-                {% if eff_values|length > 0 %}
-                    {% set avg_eff = (eff_values|sum / eff_values|length)|round(2) %}
-                    <h3 class="mb-0">{{ avg_eff }}%</h3>
-                    <div class="progress mt-2">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ avg_eff }}%" aria-valuenow="{{ avg_eff }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                {% else %}
-                    <h3 class="mb-0">N/A</h3>
-                    <div class="progress mt-2">
-                        <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mb-4">
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="metric-card">
-            <div class="metric-icon">
-                <i class="fas fa-weight"></i>
-            </div>
-            <div class="metric-content">
-                {% set total_pq = 0 %}
-                {% for capture in data.captures %}
-                    {% set total_pq = total_pq + capture.total_pq %}
-                {% endfor %}
-                <div class="metric-value">{{ total_pq|int }}</div>
-                <div class="metric-label">Total Productos</div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="metric-card">
-            <div class="metric-icon" style="background-color: rgba(25, 135, 84, 0.1); color: #198754;">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="metric-content">
-                {% set total_buenos = 0 %}
-                {% for capture in data.captures %}
-                    {% set total_buenos = total_buenos + capture.total_pq_buenos %}
-                {% endfor %}
-                <div class="metric-value">{{ total_buenos|int }}</div>
-                <div class="metric-label">Productos Buenos</div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="metric-card">
-            <div class="metric-icon" style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
-                <i class="fas fa-tachometer-alt"></i>
-            </div>
-            <div class="metric-content">
-                {% set bpm_values = [] %}
-                {% for capture in data.captures %}
-                    {% if capture.bpm_actual %}
-                        {% set bpm_values = bpm_values + [capture.bpm_actual] %}
-                    {% endif %}
-                {% endfor %}
-                
-                {% if bpm_values|length > 0 %}
-                    {% set avg_bpm = (bpm_values|sum / bpm_values|length)|round(1) %}
-                    <div class="metric-value">{{ avg_bpm }}</div>
-                {% else %}
-                    <div class="metric-value">N/A</div>
-                {% endif %}
-                <div class="metric-label">BPM Promedio</div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="metric-card">
-            <div class="metric-icon" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545;">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="metric-content">
-                {% if total_pq > 0 and total_buenos > 0 %}
-                    {% set desperdicio = ((total_pq - total_buenos) / total_pq * 100)|round(2) %}
-                    <div class="metric-value">{{ desperdicio }}%</div>
-                {% else %}
-                    <div class="metric-value">N/A</div>
-                {% endif %}
-                <div class="metric-label">Tasa de Desperdicio</div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="detail-container">
     <div class="detail-header">
-        <h4 class="detail-title"><i class="fas fa-list me-2"></i>Detalle del Ejercicio</h4>
+        <h4 class="detail-title">
+            <i class="fas fa-chart-line me-2"></i>Detalle de Ejercicio #{{ exercise.id }}
+        </h4>
+        <div>
+            <a href="{{ url_for('excel_eff_empaque', exercise_id=exercise.id) }}" class="btn btn-success">
+                <i class="fas fa-edit me-1"></i> Editar en Excel
+            </a>
+        </div>
     </div>
     
-    <div class="table-responsive">
-        <table class="table detail-table">
-            <thead>
-                <tr>
-                    <th>Sabor</th>
-                    <th>Peso (gr)</th>
-                    <th>BPM Actual</th>
-                    <th>BPM Propuesta</th>
-                    <th>Eff Actual</th>
-                    <th>Eff Propuesta</th>
-                    <th>Mejora</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for capture in data.captures %}
-                <tr>
-                    <td>{{ capture.sabor or 'N/A' }}</td>
-                    <td>{{ capture.peso_gr }}</td>
-                    <td>{{ capture.bpm_actual }}</td>
-                    <td>{{ capture.bpm_propuesta }}</td>
-                    <td>{{ capture.eff_actual_empaque }}%</td>
-                    <td>{{ capture.eff_propuesta }}%</td>
-                    <td>
-                        {% if capture.mejora_propuesta %}
-                            <span class="text-success">+{{ capture.mejora_propuesta }}%</span>
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="detail-info">
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Unidad de Negocio</div>
+                <div class="info-value">{{ exercise.bu.name if exercise.bu else 'N/A' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Planta</div>
+                <div class="info-value">{{ exercise.plant.name if exercise.plant else 'N/A' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Fecha de Creación</div>
+                <div class="info-value">{{ exercise.created_at.strftime('%d/%m/%Y') }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Última Actualización</div>
+                <div class="info-value">{{ exercise.updated_at.strftime('%d/%m/%Y') }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sección de métricas clave -->
+    <div class="card-grid">
+        <div class="metric-card efficiency">
+            <div class="metric-icon">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <div class="metric-label">Eficiencia Actual de Empaque</div>
+            <div class="metric-value">{{ "%.2f"|format(capture.eff_actual_empaque * 100) if capture.eff_actual_empaque is defined else "0.00" }}%</div>
+        </div>
+        
+        <div class="metric-card improvement">
+            <div class="metric-icon">
+                <i class="fas fa-arrow-up"></i>
+            </div>
+            <div class="metric-label">Mejora Propuesta</div>
+            <div class="metric-value">{{ "%.2f"|format(capture.mejora_propuesta * 100) if capture.mejora_propuesta is defined else "0.00" }}%</div>
+        </div>
+        
+        <div class="metric-card efficiency">
+            <div class="metric-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="metric-label">Eficiencia Propuesta</div>
+            <div class="metric-value">{{ "%.2f"|format(capture.eff_propuesta * 100) if capture.eff_propuesta is defined else "0.00" }}%</div>
+        </div>
+        
+        <div class="metric-card production">
+            <div class="metric-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="metric-label">BPM Actual</div>
+            <div class="metric-value">{{ capture.bpm_actual if capture.bpm_actual is defined else "0" }}</div>
+        </div>
+    </div>
+    
+    <!-- Gráfico comparativo -->
+    {% set global_pt = capture.global_pt if capture.global_pt is defined else 100 %}
+    <div class="comparative-chart">
+        <h5 class="chart-title">Comparativa de Throughput (kg/hr)</h5>
+        
+        <div class="progress-container">
+            <div class="progress-label">
+                <span class="progress-title">Estándar</span>
+                <span class="progress-value">{{ "%.2f"|format(capture.std_pt) if capture.std_pt is defined else "0.00" }} kg/hr</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ (capture.std_pt / global_pt * 100) if capture.std_pt is defined and global_pt != 0 else 0 }}%" aria-valuenow="{{ capture.std_pt if capture.std_pt is defined else 0 }}" aria-valuemin="0" aria-valuemax="{{ global_pt }}"></div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-label">
+                <span class="progress-title">Actual</span>
+                <span class="progress-value">{{ "%.2f"|format(capture.actual_pt) if capture.actual_pt is defined else "0.00" }} kg/hr</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (capture.actual_pt / global_pt * 100) if capture.actual_pt is defined and global_pt != 0 else 0 }}%" aria-valuenow="{{ capture.actual_pt if capture.actual_pt is defined else 0 }}" aria-valuemin="0" aria-valuemax="{{ global_pt }}"></div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-label">
+                <span class="progress-title">Propuesta</span>
+                <span class="progress-value">{{ "%.2f"|format(capture.propuesta_pt) if capture.propuesta_pt is defined else "0.00" }} kg/hr</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ (capture.propuesta_pt / global_pt * 100) if capture.propuesta_pt is defined and global_pt != 0 else 0 }}%" aria-valuenow="{{ capture.propuesta_pt if capture.propuesta_pt is defined else 0 }}" aria-valuemin="0" aria-valuemax="{{ global_pt }}"></div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-label">
+                <span class="progress-title">Global</span>
+                <span class="progress-value">{{ "%.2f"|format(global_pt) }} kg/hr</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="{{ global_pt }}" aria-valuemin="0" aria-valuemax="{{ global_pt }}"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Datos detallados -->
+    <div class="data-section">
+        <h5 class="data-section-title">
+            <i class="fas fa-table me-2"></i>Datos Detallados del Ejercicio
+        </h5>
+        <div class="table-responsive">
+            <table class="table detail-table">
+                <thead>
+                    <tr>
+                        <th>Atributo</th>
+                        <th>Valor</th>
+                        <th>Atributo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="fw-bold">Sabor</td>
+                        <td>{{ capture.sabor if capture.sabor is defined else "N/A" }}</td>
+                        <td class="fw-bold">Tubo</td>
+                        <td>{{ capture.tubo if capture.tubo is defined else "N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Peso (gr)</td>
+                        <td>{{ capture.peso_gr if capture.peso_gr is defined else "0" }}</td>
+                        <td class="fw-bold">BPM Actual</td>
+                        <td>{{ capture.bpm_actual if capture.bpm_actual is defined else "0" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Tiempo</td>
+                        <td>{{ capture.tiempo if capture.tiempo is defined else "0" }}</td>
+                        <td class="fw-bold">Total PQ</td>
+                        <td>{{ capture.total_pq if capture.total_pq is defined else "0" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Total PQ Buenos</td>
+                        <td>{{ capture.total_pq_buenos if capture.total_pq_buenos is defined else "0" }}</td>
+                        <td class="fw-bold">BPM Propuesta</td>
+                        <td>{{ capture.bpm_propuesta if capture.bpm_propuesta is defined else "0" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">BPM GLOBAL</td>
+                        <td>{{ capture.bpm_global if capture.bpm_global is defined else "0" }}</td>
+                        <td class="fw-bold">Seasoning</td>
+                        <td>{{ capture.seasoning if capture.seasoning is defined else "N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Eff STD Empaque</td>
+                        <td>{{ capture.eff_std_empaque if capture.eff_std_empaque is defined else "0" }}</td>
+                        <td class="fw-bold">Pq Global</td>
+                        <td>{{ capture.pq_global if capture.pq_global is defined else "0" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Eff Actual Empaque</td>
+                        <td>{{ capture.eff_actual_empaque if capture.eff_actual_empaque is defined else "0" }}</td>
+                        <td class="fw-bold">Mejora propuesta</td>
+                        <td>{{ capture.mejora_propuesta if capture.mejora_propuesta is defined else "0" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Eff Propuesta</td>
+                        <td>{{ capture.eff_propuesta if capture.eff_propuesta is defined else "0" }}</td>
+                        <td class="fw-bold">STD PT (kg/hr)</td>
+                        <td>{{ capture.std_pt if capture.std_pt is defined else "0" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Actual PT (kg/hr)</td>
+                        <td>{{ capture.actual_pt if capture.actual_pt is defined else "0" }}</td>
+                        <td class="fw-bold">Propuesta PT (kg/hr)</td>
+                        <td>{{ capture.propuesta_pt if capture.propuesta_pt is defined else "0" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Global PT (kg/hr)</td>
+                        <td>{{ capture.global_pt if capture.global_pt is defined else "0" }}</td>
+                        <td class="fw-bold">Desperdicio</td>
+                        <td>{{ capture.desperdicio if capture.desperdicio is defined else "N/A" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ url_for('eff_empaque') }}" class="btn btn-light">
+            <i class="fas fa-arrow-left me-1"></i> Volver
+        </a>
+        <a href="{{ url_for('excel_eff_empaque', exercise_id=exercise.id) }}" class="btn btn-success">
+            <i class="fas fa-edit me-1"></i> Editar en Excel
+        </a>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Aquí se podría agregar código para gráficos o funcionalidades adicionales
-        console.log('Detail page loaded');
-    });
-</script>
 {% endblock %}

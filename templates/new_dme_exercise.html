@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Ejercicio DME - PepsiCo{% endblock %}
+
+{% block page_title %}Crear Nuevo Ejercicio DME{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .form-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .form-title {
+        margin-bottom: 1.5rem;
+        color: var(--pepsico-blue);
+        font-weight: 600;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-cancel {
+        background-color: #e9ecef;
+        color: #495057;
+    }
+    
+    .btn-cancel:hover {
+        background-color: #dee2e6;
+    }
+    
+    .btn-create {
+        background-color: var(--frito-lay-yellow);
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .btn-create:hover {
+        background-color: #ffcc00;
+    }
+    
+    .submit-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+    
+    .required-indicator {
+        color: #dc3545;
+        margin-left: 3px;
+    }
+    
+    .instruction-card {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--pepsico-blue);
+        padding: 1.5rem;
+        border-radius: 6px;
+        margin-bottom: 2rem;
+    }
+    
+    .instruction-card h5 {
+        color: var(--pepsico-blue);
+    }
+    
+    .instruction-card ul {
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="instruction-card">
+            <h5><i class="fas fa-info-circle me-2"></i>Información</h5>
+            <p>Complete la información básica para crear un nuevo ejercicio de Monitoreo de Defectos (DME). Una vez creado, podrá agregar capturas y registrar defectos encontrados.</p>
+            <ul>
+                <li>Seleccione la Unidad de Negocio (BU) correspondiente.</li>
+                <li>Seleccione la Planta donde se realizará el ejercicio.</li>
+                <li>Indique la Línea a inspeccionar.</li>
+            </ul>
+        </div>
+        
+        <div class="form-container">
+            <h4 class="form-title"><i class="fas fa-plus-circle me-2"></i>Nuevo Ejercicio DME</h4>
+            
+            <form action="{{ url_for('new_dme_exercise') }}" method="POST">
+                <div class="form-group">
+                    <label for="bu_id" class="form-label">Unidad de Negocio (BU)<span class="required-indicator">*</span></label>
+                    <select class="form-select" id="bu_id" name="bu_id" required>
+                        <option value="" selected disabled>Seleccionar BU</option>
+                        {% for bu in bus %}
+                        <option value="{{ bu.id }}">{{ bu.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="plant_id" class="form-label">Planta<span class="required-indicator">*</span></label>
+                    <select class="form-select" id="plant_id" name="plant_id" required disabled>
+                        <option value="" selected disabled>Primero seleccione un BU</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="linea" class="form-label">Línea a Inspeccionar<span class="required-indicator">*</span></label>
+                    <select class="form-select" id="linea" name="linea" required disabled>
+                        <option value="" selected disabled>Primero seleccione una Planta</option>
+                    </select>
+                </div>
+                
+                <div class="submit-container">
+                    <a href="{{ url_for('dme_exercises') }}" class="btn btn-cancel">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-create">
+                        <i class="fas fa-check me-2"></i>Crear Ejercicio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const buSelect = document.getElementById('bu_id');
+    const plantSelect = document.getElementById('plant_id');
+    const lineaSelect = document.getElementById('linea');
+    
+    // Datos precargados desde el servidor
+    const plantasPorBu = {{ plantas_json|safe }};
+    const lineasPorPlanta = {{ lineas_json|safe }};
+    
+    console.log('Plantas por BU:', plantasPorBu);
+    console.log('Líneas por Planta:', lineasPorPlanta);
+    
+    // Cuando cambia el BU
+    buSelect.addEventListener('change', function() {
+        const buId = parseInt(this.value);
+        console.log('BU seleccionado:', buId);
+        
+        // Limpiar y deshabilitar los selectores dependientes
+        plantSelect.innerHTML = '<option value="" selected disabled>Seleccionar Planta</option>';
+        lineaSelect.innerHTML = '<option value="" selected disabled>Primero seleccione una Planta</option>';
+        
+        // Deshabilitar la selección de líneas hasta que se seleccione una planta
+        lineaSelect.disabled = true;
+        
+        if (buId && plantasPorBu[buId]) {
+            // Habilitar la selección de plantas
+            plantSelect.disabled = false;
+            
+            // Agregar las plantas correspondientes al BU seleccionado
+            plantasPorBu[buId].forEach(function(planta) {
+                const option = document.createElement('option');
+                option.value = planta.id;
+                option.textContent = planta.name;
+                plantSelect.appendChild(option);
+            });
+            
+            console.log(`Se cargaron ${plantasPorBu[buId].length} plantas para el BU ${buId}`);
+        } else {
+            // Si no hay BU seleccionado o no hay plantas para ese BU, deshabilitar el selector
+            plantSelect.disabled = true;
+            
+            if (buId) {
+                // Si hay BU seleccionado pero no hay plantas, mostrar mensaje
+                const option = document.createElement('option');
+                option.value = "";
+                option.disabled = true;
+                option.textContent = "No hay plantas disponibles para este BU";
+                plantSelect.appendChild(option);
+                console.log(`No se encontraron plantas para el BU ${buId}`);
+            }
+        }
+    });
+    
+    // Cuando cambia la Planta
+    plantSelect.addEventListener('change', function() {
+        const plantId = parseInt(this.value);
+        console.log('Planta seleccionada:', plantId);
+        
+        // Limpiar y preparar el selector de líneas
+        lineaSelect.innerHTML = '<option value="" selected disabled>Seleccionar Línea</option>';
+        
+        if (plantId && lineasPorPlanta[plantId]) {
+            // Habilitar la selección de líneas
+            lineaSelect.disabled = false;
+            
+            // Agregar las líneas correspondientes a la planta seleccionada
+            lineasPorPlanta[plantId].forEach(function(linea) {
+                const option = document.createElement('option');
+                option.value = linea.name; // Guardamos el nombre como valor
+                option.textContent = linea.name;
+                lineaSelect.appendChild(option);
+            });
+            
+            console.log(`Se cargaron ${lineasPorPlanta[plantId].length} líneas para la planta ${plantId}`);
+        } else {
+            // Si no hay planta seleccionada o no hay líneas para esa planta, deshabilitar el selector
+            lineaSelect.disabled = true;
+            
+            if (plantId) {
+                // Si hay planta seleccionada pero no hay líneas, mostrar mensaje
+                const option = document.createElement('option');
+                option.value = "";
+                option.disabled = true;
+                option.textContent = "No hay líneas disponibles para esta planta";
+                lineaSelect.appendChild(option);
+                console.log(`No se encontraron líneas para la planta ${plantId}`);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

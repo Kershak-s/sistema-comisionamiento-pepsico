@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block title %}Capturas DME - PepsiCo{% endblock %}
+
+{% block page_title %}Capturas de Ejercicio DME #{{ exercise.id }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .hour-container {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hour-header {
+        background-color: var(--pepsico-blue);
+        color: white;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+    }
+    
+    .hour-header:hover {
+        background-color: #0046ad;
+    }
+    
+    .hour-header.active {
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .hour-content {
+        padding: 1.5rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+    }
+    
+    .hour-content.show {
+        max-height: 2000px;
+    }
+    
+    .capture-card {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .capture-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .capture-header {
+        background-color: #f8f9fa;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .capture-body {
+        padding: 1rem;
+    }
+    
+    .capture-info-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .real-bags-form {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .efficiency-indicator {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-left: 0.5rem;
+    }
+    
+    .efficiency-good {
+        color: #28a745;
+    }
+    
+    .efficiency-warning {
+        color: #ffc107;
+    }
+    
+    .efficiency-bad {
+        color: #dc3545;
+    }
+    
+    .summary-info {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .summary-item {
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .summary-value {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    
+    .summary-label {
+        color: #6c757d;
+    }
+    
+    .back-button {
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Botón de regreso -->
+<div class="back-button">
+    <a href="{{ url_for('view_dme_exercise', exercise_id=exercise.id) }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Volver al Ejercicio
+    </a>
+</div>
+
+<!-- Resumen -->
+<div class="summary-info">
+    <h4 class="mb-3">Resumen del Ejercicio DME</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="summary-item">
+                <div class="summary-value text-primary">{{ horas_ordenadas|length }}</div>
+                <div class="summary-label">Horas de Monitoreo</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-item">
+                {% set total_capturas = 0 %}
+                {% for hora in horas_ordenadas %}
+                    {% set total_capturas = total_capturas + capturas_por_hora[hora].capturas|length %}
+                {% endfor %}
+                <div class="summary-value text-success">{{ total_capturas }}</div>
+                <div class="summary-label">Capturas Totales</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-item">
+                <div class="summary-value text-warning">{{ total_defectos }}</div>
+                <div class="summary-label">Defectos Registrados</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenedores por hora -->
+{% for hora in horas_ordenadas %}
+{% set capturas_hora = capturas_por_hora[hora] %}
+{% set total_defectos_hora = capturas_hora.total_defectos %}
+{% set bolsas_reales = capturas_hora.bolsas_reales|default(0) %}
+{% set eficiencia = 0 %}
+{% if bolsas_reales > 0 %}
+    {% set eficiencia = ((bolsas_reales - total_defectos_hora) / bolsas_reales * 100)|round(2) %}
+{% endif %}
+
+<div class="hour-container">
+    <div class="hour-header" data-bs-toggle="collapse" data-bs-target="#hour{{ loop.index }}">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="metric-badge bg-primary text-white">{{ capturas_hora.capturas|length }}</span>
+                <span class="metric-badge bg-warning text-dark">{{ total_defectos_hora }}</span>
+                <strong>{{ hora }}</strong>
+                {% if bolsas_reales > 0 %}
+                    <span class="efficiency-indicator 
+                        {% if eficiencia >= 98 %}efficiency-good{% elif eficiencia >= 95 %}efficiency-warning{% else %}efficiency-bad{% endif %}">
+                        {{ eficiencia }}% eficiencia
+                    </span>
+                {% endif %}
+            </div>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+    
+    <div class="hour-content collapse" id="hour{{ loop.index }}">
+        <!-- Formulario de bolsas reales -->
+        <div class="real-bags-form">
+            <form action="{{ url_for('update_bolsas_reales', exercise_id=exercise.id) }}" method="POST">
+                <input type="hidden" name="hora" value="{{ hora }}">
+                <div class="row align-items-end">
+                    <div class="col-md-6">
+                        <label for="bolsas_reales" class="form-label">Bolsas Reales</label>
+                        <input type="number" class="form-control" id="bolsas_reales" name="bolsas_reales" 
+                               value="{{ bolsas_reales }}" min="0" required>
+                        <small class="form-text text-muted">Ingrese la cantidad total de bolsas producidas en esta hora.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Eficiencia</label>
+                            <div>
+                                {% if bolsas_reales > 0 %}
+                                    <h4 class="mb-0 
+                                    {% if eficiencia >= 98 %}text-success{% elif eficiencia >= 95 %}text-warning{% else %}text-danger{% endif %}">
+                                        {{ eficiencia }}%
+                                    </h4>
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Listado de capturas -->
+        {% for captura in capturas_hora.capturas %}
+        <div class="capture-card">
+            <div class="capture-header d-flex justify-content-between align-items-center">
+                <div>Captura - {{ captura.maquina }}</div>
+                <div class="text-muted small">{{ captura.fecha_hora|fromiso|strftime('%d/%m/%Y %H:%M') }}</div>
+            </div>
+            <div class="capture-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="capture-info-item">
+                            <strong>Máquina:</strong> {{ captura.maquina }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="capture-info-item">
+                            <strong>Defectos:</strong> 
+                            <span class="badge bg-warning text-dark">{{ captura.defectos|default([])|length }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-end mt-2">
+                    <a href="{{ url_for('view_dme_capture', exercise_id=exercise.id, capture_id=captura.id) }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i> Ver Detalles
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+{% if not horas_ordenadas %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle me-2"></i>
+    No hay capturas registradas en este ejercicio. 
+    <a href="{{ url_for('new_dme_capture', exercise_id=exercise.id) }}" class="alert-link">Crear una nueva captura</a>.
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DME Captures page loaded');
+        
+        // Activar la primera hora por defecto
+        if (document.querySelector('.hour-header')) {
+            document.querySelector('.hour-header').click();
+        }
+        
+        // Manejar la expansión/colapso de las horas
+        const hourHeaders = document.querySelectorAll('.hour-header');
+        hourHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const icon = this.querySelector('.fas');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+        });
+    });
+</script>
+{% endblock %}

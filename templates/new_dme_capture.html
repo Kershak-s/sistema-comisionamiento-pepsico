@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Captura DME - PepsiCo{% endblock %}
+
+{% block page_title %}Nueva Captura DME - Ejercicio #{{ exercise.id }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .form-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .form-title {
+        margin-bottom: 1.5rem;
+        color: var(--pepsico-blue);
+        font-weight: 600;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-cancel {
+        background-color: #e9ecef;
+        color: #495057;
+    }
+    
+    .btn-cancel:hover {
+        background-color: #dee2e6;
+    }
+    
+    .btn-create {
+        background-color: var(--frito-lay-yellow);
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .btn-create:hover {
+        background-color: #ffcc00;
+    }
+    
+    .submit-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+    
+    .required-indicator {
+        color: #dc3545;
+        margin-left: 3px;
+    }
+    
+    .instruction-card {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--pepsico-blue);
+        padding: 1.5rem;
+        border-radius: 6px;
+        margin-bottom: 2rem;
+    }
+    
+    .instruction-card h5 {
+        color: var(--pepsico-blue);
+    }
+    
+    .instruction-card ul {
+        margin-bottom: 0;
+    }
+    
+    .exercise-info {
+        background-color: #e9ecef;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .info-row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .info-item {
+        flex: 1 1 200px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.1rem;
+    }
+    
+    .info-value {
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="instruction-card">
+            <h5><i class="fas fa-info-circle me-2"></i>Información</h5>
+            <p>Complete la información para crear una nueva captura en el ejercicio DME. Esta captura registrará defectos encontrados en la máquina especificada.</p>
+            <ul>
+                <li>Indique el nombre de la máquina a inspeccionar.</li>
+                <li>La fecha y hora se registrarán automáticamente.</li>
+                <li>Una vez creada la captura, podrá agregar los defectos encontrados.</li>
+            </ul>
+        </div>
+        
+        <div class="form-container">
+            <h4 class="form-title"><i class="fas fa-camera me-2"></i>Nueva Captura</h4>
+            
+            <div class="exercise-info mb-4">
+                <h6 class="mb-2">Información del Ejercicio:</h6>
+                <div class="info-row">
+                    <div class="info-item">
+                        <div class="info-label">Unidad de Negocio</div>
+                        <div class="info-value">{{ exercise.bu.name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Planta</div>
+                        <div class="info-value">{{ exercise.plant.name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Línea</div>
+                        <div class="info-value">{{ exercise.linea }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <form action="{{ url_for('new_dme_capture', exercise_id=exercise.id) }}" method="POST">
+                <div class="form-group">
+                    <label for="maquina" class="form-label">Nombre de la Máquina<span class="required-indicator">*</span></label>
+                    <input type="text" class="form-control" id="maquina" name="maquina" required placeholder="Ingrese el nombre de la máquina a inspeccionar">
+                    <small class="form-text text-muted">Ejemplo: Máquina Selladora #2, Empacadora Principal, etc.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Fecha y Hora</label>
+                    <input type="text" class="form-control" value="{{ now.strftime('%d/%m/%Y %H:%M') }}" readonly disabled>
+                    <small class="form-text text-muted">La fecha y hora se registrarán automáticamente al crear la captura.</small>
+                </div>
+                
+                <div class="submit-container">
+                    <a href="{{ url_for('view_dme_exercise', exercise_id=exercise.id) }}" class="btn btn-cancel">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-create">
+                        <i class="fas fa-check me-2"></i>Crear Captura
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('New DME Capture page loaded');
+});
+</script>
+{% endblock %}

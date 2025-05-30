@@ -1,0 +1,579 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Ejercicio de Eficiencia - PepsiCo{% endblock %}
+
+{% block page_title %}Editar Ejercicio #{{ exercise.id }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .edit-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .edit-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .edit-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--pepsico-blue);
+    }
+    
+    .back-link {
+        color: var(--pepsico-blue);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .back-link i {
+        margin-right: 0.25rem;
+    }
+    
+    .edit-info {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .info-item {
+        background-color: white;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .info-label {
+        color: #6c757d;
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--pepsico-blue);
+    }
+    
+    .edit-table {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .edit-table th {
+        background-color: var(--pepsico-blue);
+        color: white;
+        font-weight: 500;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    .edit-table td {
+        vertical-align: middle;
+    }
+    
+    .form-control-table {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .table-controls {
+        margin-bottom: 1.5rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .field-group {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+    }
+    
+    .field-group-title {
+        font-weight: 600;
+        color: var(--pepsico-blue);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .field-group-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        background-color: rgba(0, 87, 168, 0.1);
+        color: var(--pepsico-blue);
+        margin-right: 0.75rem;
+    }
+    
+    .btn-action {
+        border-radius: 50px;
+        padding: 0.5rem 1.25rem;
+        font-weight: 500;
+    }
+    
+    .form-control:read-only {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+    }
+    
+    .table-section {
+        margin-bottom: 2rem;
+    }
+    
+    .table-section-title {
+        font-weight: 600;
+        color: var(--pepsico-blue);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+    
+    .header-tooltip {
+        font-size: 0.7rem;
+        color: white;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.1rem 0.3rem;
+        border-radius: 4px;
+        margin-left: 0.25rem;
+        cursor: help;
+    }
+    
+    .editable-cell {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .calculated-cell {
+        background-color: rgba(25, 135, 84, 0.05);
+    }
+    
+    /* Personalización de tabs */
+    .nav-tabs {
+        border-bottom: 2px solid #dee2e6;
+        margin-bottom: 1.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        padding: 0.75rem 1rem;
+        font-weight: 500;
+        color: #6c757d;
+        transition: all 0.2s;
+        margin-bottom: -2px;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        border-color: transparent;
+        color: var(--pepsico-blue);
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: var(--pepsico-blue);
+        background-color: transparent;
+        border-bottom: 2px solid var(--pepsico-blue);
+    }
+    
+    /* Leyenda */
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+    }
+    
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('eff_empaque') }}" class="back-link">
+    <i class="fas fa-arrow-left"></i> Volver a Lista de Ejercicios
+</a>
+
+<div class="edit-container">
+    <div class="edit-header">
+        <h4 class="edit-title">
+            <i class="fas fa-edit me-2"></i>Editar Ejercicio de Eficiencia #{{ exercise.id }}
+        </h4>
+        
+        <div>
+            <a href="{{ url_for('view_eff_empaque', exercise_id=exercise.id) }}" class="btn btn-light me-2">
+                <i class="fas fa-eye me-1"></i> Ver Detalles
+            </a>
+        </div>
+    </div>
+    
+    <div class="edit-info">
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Unidad de Negocio</div>
+                <div class="info-value">{{ exercise.bu.name if exercise.bu else 'N/A' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Planta</div>
+                <div class="info-value">{{ exercise.plant.name if exercise.plant else 'N/A' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Fecha de Creación</div>
+                <div class="info-value">{{ exercise.created_at.strftime('%d/%m/%Y') }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Última Actualización</div>
+                <div class="info-value">{{ exercise.updated_at.strftime('%d/%m/%Y') }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-section">
+        <div class="table-section-title">
+            <i class="fas fa-table me-2"></i> Datos del Ejercicio de Eficiencia
+        </div>
+        
+        <!-- Guía de colores -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color editable-cell"></div>
+                <span>Campos editables</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color calculated-cell"></div>
+                <span>Campos calculados automáticamente</span>
+            </div>
+        </div>
+        
+        <form method="post">
+            <div class="table-controls mb-3">
+                <button type="button" id="addCapture" class="btn btn-pepsico">
+                    <i class="fas fa-plus me-1"></i> Agregar Captura
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered edit-table" id="capturesTable">
+                    <thead>
+                        <tr>
+                            <th>Sabor <span class="header-tooltip" title="Seleccione el sabor del producto">?</span></th>
+                            <th>Tubo <span class="header-tooltip" title="Número o identificación del tubo">?</span></th>
+                            <th>Peso (gr) <span class="header-tooltip" title="Peso en gramos del producto">?</span></th>
+                            <th>BPM Actual <span class="header-tooltip" title="Bolsas por minuto actual">?</span></th>
+                            <th>Tiempo <span class="header-tooltip" title="Tiempo en minutos">?</span></th>
+                            <th>Total PQ <span class="header-tooltip" title="Total de paquetes producidos">?</span></th>
+                            <th>PQ Buenos <span class="header-tooltip" title="Paquetes en buen estado">?</span></th>
+                            <th>BPM Propuesta <span class="header-tooltip" title="Bolsas por minuto propuesta">?</span></th>
+                            <th>BPM Global <span class="header-tooltip" title="Bolsas por minuto global">?</span></th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for capture in data.captures %}
+                        <tr class="data-row">
+                            <td class="editable-cell">
+                                <select name="sabor[]" class="form-select form-control-table">
+                                    <option value="">Seleccionar sabor</option>
+                                    {% for flavor in flavors %}
+                                    <option value="{{ flavor.name }}" {% if flavor.name == capture.sabor %}selected{% endif %}>
+                                        {{ flavor.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="editable-cell">
+                                <input type="text" name="tubo[]" class="form-control form-control-table" value="{{ capture.tubo }}">
+                            </td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="peso_gr[]" class="form-control form-control-table peso-input" value="{{ capture.peso_gr }}">
+                            </td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="bpm_actual[]" class="form-control form-control-table bpm-actual-input" value="{{ capture.bpm_actual }}">
+                            </td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="tiempo[]" class="form-control form-control-table tiempo-input" value="{{ capture.tiempo }}">
+                            </td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="total_pq[]" class="form-control form-control-table total-pq-input" value="{{ capture.total_pq }}">
+                            </td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="total_pq_buenos[]" class="form-control form-control-table total-pq-buenos-input" value="{{ capture.total_pq_buenos }}">
+                            </td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="bpm_propuesta[]" class="form-control form-control-table bpm-propuesta-input" value="{{ capture.bpm_propuesta }}">
+                            </td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="bpm_global[]" class="form-control form-control-table bpm-global-input" value="{{ capture.bpm_global }}">
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-danger delete-row">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="data-row">
+                            <td colspan="2" class="fw-bold">Seasoning</td>
+                            <td class="editable-cell">
+                                <input type="text" name="seasoning[]" class="form-control form-control-table" value="{{ capture.seasoning }}">
+                            </td>
+                            <td class="fw-bold">Eff STD Empaque</td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="eff_std_empaque[]" class="form-control form-control-table eff-std-input" value="{{ capture.eff_std_empaque }}">
+                            </td>
+                            <td class="fw-bold">Pq Global</td>
+                            <td class="calculated-cell">
+                                <input type="number" step="0.01" name="pq_global[]" class="form-control form-control-table pq-global-output" value="{{ capture.pq_global }}" readonly>
+                            </td>
+                            <td class="fw-bold">Desperdicio</td>
+                            <td colspan="2" class="editable-cell">
+                                <input type="text" name="desperdicio[]" class="form-control form-control-table" value="{{ capture.desperdicio }}">
+                            </td>
+                        </tr>
+                        <tr class="data-row">
+                            <td class="fw-bold">Eff Actual</td>
+                            <td class="calculated-cell">
+                                <input type="number" step="0.01" name="eff_actual_empaque[]" class="form-control form-control-table eff-actual-output" value="{{ capture.eff_actual_empaque }}" readonly>
+                            </td>
+                            <td class="fw-bold">Mejora propuesta</td>
+                            <td class="editable-cell">
+                                <input type="number" step="0.01" name="mejora_propuesta[]" class="form-control form-control-table mejora-propuesta-input" value="{{ capture.mejora_propuesta }}">
+                            </td>
+                            <td class="fw-bold">Eff Propuesta</td>
+                            <td class="calculated-cell">
+                                <input type="number" step="0.01" name="eff_propuesta[]" class="form-control form-control-table eff-propuesta-output" value="{{ capture.eff_propuesta }}" readonly>
+                            </td>
+                            <td colspan="4"></td>
+                        </tr>
+                        <tr class="data-row">
+                            <td class="fw-bold">STD PT (kg/hr)</td>
+                            <td class="calculated-cell">
+                                <input type="number" step="0.01" name="std_pt[]" class="form-control form-control-table std-pt-output" value="{{ capture.std_pt }}" readonly>
+                            </td>
+                            <td class="fw-bold">Actual PT (kg/hr)</td>
+                            <td class="calculated-cell">
+                                <input type="number" step="0.01" name="actual_pt[]" class="form-control form-control-table actual-pt-output" value="{{ capture.actual_pt }}" readonly>
+                            </td>
+                            <td class="fw-bold">Propuesta PT (kg/hr)</td>
+                            <td class="calculated-cell">
+                                <input type="number" step="0.01" name="propuesta_pt[]" class="form-control form-control-table propuesta-pt-output" value="{{ capture.propuesta_pt }}" readonly>
+                            </td>
+                            <td class="fw-bold">Global PT (kg/hr)</td>
+                            <td class="calculated-cell">
+                                <input type="number" step="0.01" name="global_pt[]" class="form-control form-control-table global-pt-output" value="{{ capture.global_pt }}" readonly>
+                            </td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <!-- Separador entre capturas -->
+                        <tr class="separator">
+                            <td colspan="10" style="height: 20px; background-color: #f8f9fa;"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ url_for('eff_empaque') }}" class="btn btn-light btn-action">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-pepsico btn-action">
+                    <i class="fas fa-save me-1"></i> Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const capturesTable = document.getElementById('capturesTable');
+        const addCaptureBtn = document.getElementById('addCapture');
+        
+        // Función para calcular los valores
+        function calculateValues(row) {
+            // Obtener los grupos de filas (cada captura tiene 4 filas)
+            const rows = Array.from(row.parentNode.querySelectorAll('tr.data-row'));
+            const startIndex = rows.indexOf(row);
+            const rowGroup = startIndex - (startIndex % 4);
+            
+            // Obtener campos de entrada relevantes
+            const pesoGr = parseFloat(rows[rowGroup].querySelector('.peso-input').value) || 0;
+            const bpmActual = parseFloat(rows[rowGroup].querySelector('.bpm-actual-input').value) || 0;
+            const tiempo = parseFloat(rows[rowGroup].querySelector('.tiempo-input').value) || 0;
+            const totalPq = parseFloat(rows[rowGroup].querySelector('.total-pq-input').value) || 0;
+            const totalPqBuenos = parseFloat(rows[rowGroup].querySelector('.total-pq-buenos-input').value) || 0;
+            const bpmPropuesta = parseFloat(rows[rowGroup].querySelector('.bpm-propuesta-input').value) || 0;
+            const bpmGlobal = parseFloat(rows[rowGroup].querySelector('.bpm-global-input').value) || 0;
+            const effStd = parseFloat(rows[rowGroup+1].querySelector('.eff-std-input').value) || 0;
+            const mejoraPropuesta = parseFloat(rows[rowGroup+2].querySelector('.mejora-propuesta-input').value) || 0;
+            
+            // Realizar cálculos
+            const pqGlobal = (bpmGlobal * 60 * tiempo) || 0;
+            const effActualEmpaque = (tiempo && bpmActual) ? (totalPqBuenos / (bpmActual * 60 * tiempo)) : 0;
+            const effPropuesta = effActualEmpaque + mejoraPropuesta;
+            
+            // Cálculos PT (ProductionThroughput)
+            const stdPt = ((pesoGr / 1000) * bpmActual * 60 * effStd) || 0;
+            const actualPt = ((pesoGr / 1000) * bpmActual * 60 * effActualEmpaque) || 0;
+            const propuestaPt = ((pesoGr / 1000) * bpmPropuesta * 60 * effPropuesta) || 0;
+            const globalPt = ((pesoGr / 1000) * bpmGlobal * 60 * effStd) || 0;
+            
+            // Actualizar campos calculados
+            rows[rowGroup+1].querySelector('.pq-global-output').value = pqGlobal.toFixed(2);
+            rows[rowGroup+2].querySelector('.eff-actual-output').value = effActualEmpaque.toFixed(4);
+            rows[rowGroup+2].querySelector('.eff-propuesta-output').value = effPropuesta.toFixed(4);
+            rows[rowGroup+3].querySelector('.std-pt-output').value = stdPt.toFixed(2);
+            rows[rowGroup+3].querySelector('.actual-pt-output').value = actualPt.toFixed(2);
+            rows[rowGroup+3].querySelector('.propuesta-pt-output').value = propuestaPt.toFixed(2);
+            rows[rowGroup+3].querySelector('.global-pt-output').value = globalPt.toFixed(2);
+        }
+        
+        // Adjuntar event listeners a todos los campos de entrada
+        document.querySelectorAll('input.form-control-table:not([readonly])').forEach(input => {
+            input.addEventListener('input', function() {
+                calculateValues(this.closest('tr'));
+            });
+        });
+        
+        // Botón para agregar nueva captura
+        addCaptureBtn.addEventListener('click', function() {
+            // Obtener el último grupo de filas
+            const tbody = capturesTable.querySelector('tbody');
+            const rows = tbody.querySelectorAll('tr');
+            const lastSeparator = rows[rows.length - 1];
+            
+            // Clonar el primer grupo de 5 filas (4 data-rows + 1 separator)
+            const firstDataRow = tbody.querySelector('tr.data-row');
+            const rowGroup = [];
+            
+            // Encontrar el primer grupo completo de filas (4 data-rows + separator)
+            let currentRow = firstDataRow;
+            for (let i = 0; i < 5; i++) {
+                rowGroup.push(currentRow.cloneNode(true));
+                currentRow = currentRow.nextElementSibling;
+            }
+            
+            // Limpiar los valores de entrada
+            rowGroup.forEach(row => {
+                if (row.classList.contains('data-row')) {
+                    row.querySelectorAll('input').forEach(input => {
+                        input.value = '';
+                    });
+                    
+                    row.querySelectorAll('select').forEach(select => {
+                        select.selectedIndex = 0;
+                    });
+                }
+            });
+            
+            // Agregar el nuevo grupo de filas
+            rowGroup.forEach(row => {
+                tbody.insertBefore(row, lastSeparator.nextSibling);
+            });
+            
+            // Adjuntar nuevos event listeners a los campos recién añadidos
+            rowGroup.forEach(row => {
+                if (row.classList.contains('data-row')) {
+                    row.querySelectorAll('input:not([readonly])').forEach(input => {
+                        input.addEventListener('input', function() {
+                            calculateValues(this.closest('tr'));
+                        });
+                    });
+                    
+                    // Botón de eliminar fila
+                    const deleteBtn = row.querySelector('.delete-row');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function() {
+                            const startRow = this.closest('tr');
+                            const rows = Array.from(startRow.parentNode.querySelectorAll('tr.data-row'));
+                            const startIndex = rows.indexOf(startRow);
+                            const rowGroup = Math.floor(startIndex / 4) * 4;
+                            
+                            // Eliminar las 4 filas de datos y el separador
+                            for (let i = 0; i < 4; i++) {
+                                if (rows[rowGroup + i]) {
+                                    rows[rowGroup + i].remove();
+                                }
+                            }
+                            
+                            // Eliminar el separador si no es el último
+                            const separators = startRow.parentNode.querySelectorAll('tr.separator');
+                            if (separators.length > 1 && rowGroup / 4 < separators.length) {
+                                separators[rowGroup / 4].remove();
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        
+        // Adjuntar event listeners a los botones de eliminar
+        document.querySelectorAll('.delete-row').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const startRow = this.closest('tr');
+                const rows = Array.from(startRow.parentNode.querySelectorAll('tr.data-row'));
+                const startIndex = rows.indexOf(startRow);
+                const rowGroup = Math.floor(startIndex / 4) * 4;
+                
+                // Eliminar las 4 filas de datos y el separador
+                for (let i = 0; i < 4; i++) {
+                    if (rows[rowGroup + i]) {
+                        rows[rowGroup + i].remove();
+                    }
+                }
+                
+                // Eliminar el separador si no es el último
+                const separators = startRow.parentNode.querySelectorAll('tr.separator');
+                if (separators.length > 1 && rowGroup / 4 < separators.length) {
+                    separators[rowGroup / 4].remove();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
