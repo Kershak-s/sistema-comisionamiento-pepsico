@@ -1034,5 +1034,30 @@ def delete_dme_capture(exercise_id, capture_id):
             flash(f"Error al eliminar la captura: {str(e)}")
     return redirect(url_for('view_dme_exercise', exercise_id=exercise_id))
 
+@app.route('/dme_exercises/<int:exercise_id>/captures/<capture_id>/update_cantidad', methods=['POST'])
+def update_dme_defecto_cantidad(exercise_id, capture_id):
+    if 'user_id' not in session:
+        return jsonify(success=False, message="No autorizado"), 401
+    exercise = DmeExercise.query.get_or_404(exercise_id)
+    data = json.loads(exercise.data)
+    req = request.get_json()
+    defecto_id = req.get('defecto_id')
+    cantidad = req.get('cantidad')
+    try:
+        cantidad = int(cantidad)
+    except Exception:
+        return jsonify(success=False, message="Cantidad inválida"), 400
+
+    for captura in data.get("capturas", []):
+        if str(captura.get("id")) == str(capture_id):
+            for defecto in captura.get("defectos", []):
+                if str(defecto.get("id")) == str(defecto_id):
+                    defecto["cantidad"] = cantidad
+                    exercise.data = json.dumps(data)
+                    exercise.updated_at = datetime.now()
+                    db.session.commit()
+                    return jsonify(success=True)
+    return jsonify(success=False, message="Defecto no encontrado"), 404
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')

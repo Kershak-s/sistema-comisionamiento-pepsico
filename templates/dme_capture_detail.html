@@ -193,6 +193,34 @@
     .table-striped tbody tr:nth-of-type(even) {
         background-color: #ffffff;
     }
+
+    .cantidad-input-group .btn {
+        border-radius: 0 !important;
+        transition: background 0.2s, color 0.2s;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .cantidad-input-group .btn:active, .cantidad-input-group .btn:focus {
+        background: #0057a8 !important;
+        color: #fff !important;
+    }
+
+    .cantidad-defecto-input:focus {
+        box-shadow: 0 0 0 2px #3984c933;
+        border-color: #3984c9;
+        background: #e3f0ff;
+    }
+
+    /* Ocultar flechas del input number en todos los navegadores */
+    .no-arrows::-webkit-outer-spin-button,
+    .no-arrows::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    .no-arrows[type=number] {
+        -moz-appearance: textfield;
+    }
 </style>
 {% endblock %}
 
@@ -270,7 +298,25 @@
                 {% for defecto in captura.defectos|sort(attribute='fecha_hora', reverse=true) %}
                 <tr>
                     <td >{{ defecto.tipo }}</td>
-                    <td ><strong>{{ defecto.cantidad }}</strong></td>
+                    <td >
+                        <div class="input-group cantidad-input-group" style="width: 110px;">
+                            <button class="btn btn-primary btn-sm btn-restar-cantidad" type="button" tabindex="-1" title="Restar">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <input 
+                                type="number" 
+                                class="form-control cantidad-defecto-input text-center fw-bold border-primary no-arrows" 
+                                value="{{ defecto.cantidad }}" 
+                                min="1"
+                                data-defecto-id="{{ defecto.id }}"
+                                data-capture-id="{{ captura.id }}"
+                                style="width: 45px; background: none; color: #0057a8; border: none;"
+                            >
+                            <button class="btn btn-primary btn-sm btn-sumar-cantidad" type="button" tabindex="-1" title="Sumar">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </td>
                     <td >{{ defecto.fecha_hora|fromiso|strftime('%d/%m/%Y %H:%M') }}</td>
                     <td>
                         {% if defecto.comentario %}
@@ -432,6 +478,52 @@
                 reader.readAsDataURL(this.files[0]);
             }
         };
+
+        // Botones + y -
+        document.querySelectorAll('.btn-restar-cantidad').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.parentNode.querySelector('.cantidad-defecto-input');
+                let valor = parseInt(input.value) || 1;
+                if (valor > 1) {
+                    input.value = valor - 1;
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+        document.querySelectorAll('.btn-sumar-cantidad').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.parentNode.querySelector('.cantidad-defecto-input');
+                let valor = parseInt(input.value) || 1;
+                input.value = valor + 1;
+                input.dispatchEvent(new Event('change'));
+            });
+        });
+
+        // Guardar cantidad en tiempo real
+        document.querySelectorAll('.cantidad-defecto-input').forEach(input => {
+            input.addEventListener('change', function() {
+                const defectoId = this.dataset.defectoId;
+                const captureId = this.dataset.captureId;
+                const cantidad = this.value;
+                fetch(`{{ url_for('update_dme_defecto_cantidad', exercise_id=exercise.id, capture_id=captura.id) }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        defecto_id: defectoId,
+                        cantidad: cantidad
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Error al actualizar: ' + (data.message || ''));
+                    }
+                })
+                .catch(() => alert('Error de red al actualizar'));
+            });
+        });
     });
 </script>
 {% endblock %}
