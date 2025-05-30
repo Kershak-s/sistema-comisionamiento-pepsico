@@ -667,7 +667,6 @@ def new_dme_capture(exercise_id):
     
     exercise = DmeExercise.query.get_or_404(exercise_id)
     # Obtener la línea y su cantidad de pipes
-    from models import Line
     linea_obj = Line.query.filter_by(name=exercise.linea, plant_id=exercise.plant_id).first()
     pipes = linea_obj.pipes if linea_obj else 0
 

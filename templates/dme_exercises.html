@@ -108,15 +108,14 @@
 {% if exercises %}
 <div class="row">
     {% for exercise in exercises %}
-    {% set data = exercise.data|tojson|safe|fromjson %}
-    {% set capturas_count = data.capturas|default([])|length %}
-    {% set defectos_count = 0 %}
-    {% for captura in data.capturas|default([]) %}
-        {% if captura.defectos is defined %}
-            {% set defectos_count = defectos_count + captura.defectos|length %}
-        {% endif %}
+    {% set data = exercise.data|fromjson %}
+    {% set capturas_count = data.capturas|length %}
+    {% set ns = namespace(defectos_count=0) %}
+    {% for captura in data.capturas %}
+        {% for defecto in captura.defectos|default([]) %}
+            {% set ns.defectos_count = ns.defectos_count + defecto.cantidad %}
+        {% endfor %}
     {% endfor %}
-    
     <div class="col-lg-6">
         <div class="dme-card card">
             <div class="dme-card-header d-flex justify-content-between align-items-center">
@@ -186,8 +185,8 @@
                 <div class="dme-info-item">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span><strong>Defectos registrados:</strong> 
-                        {% if defectos_count > 0 %}
-                            <span class="badge bg-warning text-dark">{{ defectos_count }}</span>
+                        {% if ns.defectos_count > 0 %}
+                            <span class="badge bg-warning text-dark">{{ ns.defectos_count }}</span>
                         {% else %}
                             <span class="badge bg-secondary">0</span>
                         {% endif %}
