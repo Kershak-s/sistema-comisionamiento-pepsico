@@ -1,391 +1,200 @@
 {% extends "base.html" %}
 
-{% block title %}Comisionamiento - PepsiCo{% endblock %}
+{% block title %}Deep Dive - PepsiCo{% endblock %}
 
-{% block page_title %}Comisionamiento de Líneas{% endblock %}
+{% block page_title %}Comisionamiento{% endblock %}
 
 {% block extra_styles %}
 <style>
-    .progress-container {
-        margin-bottom: 2rem;
-        background: white;
-        border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    
-    .progress-label {
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-    }
-    
-    .progress-bar {
-        height: 10px;
-        border-radius: 5px;
-    }
-    
-    .process-timeline {
-        position: relative;
-        padding-left: 50px;
-    }
-    
-    .process-timeline::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 20px;
-        height: 100%;
-        width: 2px;
-        background-color: #dee2e6;
-    }
-    
-    .timeline-item {
-        position: relative;
-        margin-bottom: 2rem;
-    }
-    
-    .timeline-item:last-child {
-        margin-bottom: 0;
-    }
-    
-    .timeline-marker {
-        position: absolute;
-        left: -50px;
-        top: 0;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: var(--pepsico-blue);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        z-index: 1;
-    }
-    
-    .timeline-item.completed .timeline-marker {
-        background-color: #28a745;
-    }
-    
-    .timeline-item.pending .timeline-marker {
-        background-color: #ffc107;
-    }
-    
-    .timeline-content {
-        background-color: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    
-    .comision-card {
+    .deep-dive-card {
+        transition: all 0.3s ease;
         border-radius: 12px;
         overflow: hidden;
         height: 100%;
-        transition: all 0.3s ease;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         border: none;
     }
     
-    .comision-card:hover {
+    .deep-dive-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
     
-    .comision-card .card-body {
-        padding: 1.5rem;
-    }
-    
-    .comision-card .card-header {
-        background-color: var(--frito-lay-yellow);
-        color: #333;
+    .deep-dive-card .card-header {
+        background-color: var(--pepsico-blue);
+        color: white;
         font-weight: 600;
         padding: 1.2rem;
     }
     
-    .comision-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
+    .deep-dive-card .icon-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.15);
         margin-bottom: 1rem;
-        background-color: rgba(0, 87, 168, 0.1);
-        color: var(--pepsico-blue);
     }
     
-    .comision-icon i {
-        font-size: 1.5rem;
+    .deep-dive-card .icon-wrapper i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.8rem;
     }
     
-    .status-badge {
+    .deep-dive-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .deep-dive-card p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    
+    .deep-dive-card .btn {
         border-radius: 50px;
-        padding: 0.25rem 0.75rem;
-        font-size: 0.75rem;
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+    }
+    
+    .metrics-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .metric-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.2rem;
+        text-align: center;
+        height: 100%;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
         font-weight: 600;
-        letter-spacing: 0.5px;
+        margin: 0.5rem 0;
+    }
+    
+    .metric-label {
+        color: #6c757d;
+        font-size: 0.9rem;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Barra de Progreso del Comisionamiento -->
-<div class="progress-container">
-    <h4 class="mb-4"><i class="fas fa-tasks me-2"></i>Progreso del Comisionamiento</h4>
-    <div class="progress-label">
-        <span>Avance General</span>
-        <span>65%</span>
-    </div>
-    <div class="progress mb-4">
-        <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="progress-label">
-                <span>Configuración</span>
-                <span class="text-success">100%</span>
-            </div>
-            <div class="progress">
-                <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="progress-label">
-                <span>Ajuste de Pesos</span>
-                <span class="text-success">90%</span>
-            </div>
-            <div class="progress">
-                <div class="progress-bar bg-success" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="progress-label">
-                <span>Certificación</span>
-                <span class="text-warning">40%</span>
-            </div>
-            <div class="progress">
-                <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="progress-label">
-                <span>Performance</span>
-                <span class="text-danger">30%</span>
-            </div>
-            <div class="progress">
-                <div class="progress-bar bg-danger" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Área de Módulos de Comisionamiento -->
-<div class="row mb-4">
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="comision-card card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Pesos & Llenado</h5>
-                    <span class="status-badge bg-success text-white">Activo</span>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="deep-dive-card card">
+            <div class="card-header d-flex align-items-center">
+                <div class="icon-wrapper me-3">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Eficiencia de Empaque</h5>
+                    <p class="mb-0 small">Análisis detallado de eficiencia</p>
                 </div>
             </div>
             <div class="card-body">
-                <div class="comision-icon">
+                <p>Analice y optimice la eficiencia del proceso de empaque, identificando puntos de mejora y ajustando parámetros para maximizar el rendimiento.</p>
+                <a href="{{ url_for('eff_empaque') }}" class="btn btn-pepsico">
+                    <i class="fas fa-chart-line me-2"></i> Ver análisis
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="deep-dive-card card">
+            <div class="card-header d-flex align-items-center" style="background-color: #4CAF50;">
+                <div class="icon-wrapper me-3">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">DME</h5>
+                    <p class="mb-0 small">Defect Monitoring Exercise</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>Monitoree y analice los defectos en el proceso de producción, identificando áreas de mejora para reducir desperdicios y aumentar la calidad.</p>
+                <a href="{{ url_for('dme_exercises') }}" class="btn btn-success">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Analizar DME
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="deep-dive-card card">
+            <div class="card-header d-flex align-items-center" style="background-color: #FF9800;">
+                <div class="icon-wrapper me-3">
                     <i class="fas fa-weight"></i>
                 </div>
-                <h6 class="card-title mb-2">Control de Pesos</h6>
-                <p class="card-text text-muted mb-3">Gestión de Back Fill y Air Fill para pesos óptimos de producto.</p>
-                <a href="#" class="btn btn-sm btn-frito-lay w-100">Administrar</a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="comision-card card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Certificación</h5>
-                    <span class="status-badge bg-warning text-dark">En progreso</span>
+                <div>
+                    <h5 class="mb-1">Carga de Pesos</h5>
+                    <p class="mb-0 small">Gestión y análisis de pesaje</p>
                 </div>
             </div>
             <div class="card-body">
-                <div class="comision-icon">
-                    <i class="fas fa-certificate"></i>
-                </div>
-                <h6 class="card-title mb-2">Programa de Certificación</h6>
-                <p class="card-text text-muted mb-3">Seguimiento del programa de certificación de la línea de producción.</p>
-                <a href="#" class="btn btn-sm btn-frito-lay w-100">Administrar</a>
+                <p>Gestione y analice los datos de peso del producto, asegurando la consistencia y cumplimiento de estándares regulatorios.</p>
+                <a href="#" class="btn" style="background-color: #FF9800; color: white;">
+                    <i class="fas fa-balance-scale me-2"></i> Gestionar pesos
+                </a>
             </div>
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="comision-card card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Performance</h5>
-                    <span class="status-badge bg-danger text-white">Pendiente</span>
+    <div class="col-lg-6 mb-4">
+        <div class="deep-dive-card card">
+            <div class="card-header d-flex align-items-center" style="background-color: #9C27B0;">
+                <div class="icon-wrapper me-3">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Balance de Línea</h5>
+                    <p class="mb-0 small">Optimización de procesos</p>
                 </div>
             </div>
             <div class="card-body">
-                <div class="comision-icon">
-                    <i class="fas fa-tachometer-alt"></i>
-                </div>
-                <h6 class="card-title mb-2">Análisis de Rendimiento</h6>
-                <p class="card-text text-muted mb-3">Evaluación de KPIs y métricas de rendimiento de la línea.</p>
-                <a href="#" class="btn btn-sm btn-frito-lay w-100">Administrar</a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="comision-card card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">IPS</h5>
-                    <span class="status-badge bg-success text-white">Completado</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="comision-icon">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <h6 class="card-title mb-2">Check Inicial + IPS</h6>
-                <p class="card-text text-muted mb-3">Verificación inicial y estándares de producción internacionales.</p>
-                <a href="#" class="btn btn-sm btn-frito-lay w-100">Ver detalles</a>
-            </div>
-        </div>
-    </div>
-    
-
-</div>
-
-<!-- Línea de Tiempo del Proceso -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-stream me-2"></i>Línea de Tiempo del Comisionamiento</h5>
-    </div>
-    <div class="card-body">
-        <div class="process-timeline">
-            <div class="timeline-item completed">
-                <div class="timeline-marker">
-                    <i class="fas fa-check"></i>
-                </div>
-                <div class="timeline-content">
-                    <h5>Instalación de Equipos</h5>
-                    <p class="text-muted mb-1">Se completó la instalación de todos los equipos de la línea de producción</p>
-                    <small class="text-success"><i class="fas fa-calendar-check me-1"></i>Completado: 15 de Marzo, 2025</small>
-                </div>
-            </div>
-            
-            <div class="timeline-item completed">
-                <div class="timeline-marker">
-                    <i class="fas fa-check"></i>
-                </div>
-                <div class="timeline-content">
-                    <h5>Configuración Inicial</h5>
-                    <p class="text-muted mb-1">Configuración de parámetros básicos y pruebas iniciales del sistema</p>
-                    <small class="text-success"><i class="fas fa-calendar-check me-1"></i>Completado: 28 de Marzo, 2025</small>
-                </div>
-            </div>
-            
-            <div class="timeline-item active">
-                <div class="timeline-marker">
-                    <i class="fas fa-play"></i>
-                </div>
-                <div class="timeline-content">
-                    <h5>Ajuste de Pesos y Calibración</h5>
-                    <p class="text-muted mb-1">Calibración de sensores y ajuste de pesos para diferentes productos</p>
-                    <small class="text-primary"><i class="fas fa-calendar-alt me-1"></i>En progreso - Fecha estimada: 25 de Abril, 2025</small>
-                </div>
-            </div>
-            
-            <div class="timeline-item pending">
-                <div class="timeline-marker">
-                    <i class="fas fa-hourglass-half"></i>
-                </div>
-                <div class="timeline-content">
-                    <h5>Pruebas de Rendimiento</h5>
-                    <p class="text-muted mb-1">Evaluación del rendimiento de la línea con diferentes productos</p>
-                    <small class="text-warning"><i class="fas fa-calendar-alt me-1"></i>Pendiente - Fecha estimada: 10 de Mayo, 2025</small>
-                </div>
-            </div>
-            
-            <div class="timeline-item pending">
-                <div class="timeline-marker">
-                    <i class="fas fa-hourglass-half"></i>
-                </div>
-                <div class="timeline-content">
-                    <h5>Certificación Final</h5>
-                    <p class="text-muted mb-1">Certificación completa de la línea para producción comercial</p>
-                    <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i>Pendiente - Fecha estimada: 30 de Mayo, 2025</small>
-                </div>
+                <p>Equilibre las cargas de trabajo y optimice la distribución de recursos en la línea de producción para maximizar la eficiencia general.</p>
+                <a href="#" class="btn" style="background-color: #9C27B0; color: white;">
+                    <i class="fas fa-layer-group me-2"></i> Balancear línea
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Tabla de Últimas Actividades -->
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Actividades Recientes</h5>
-        <button class="btn btn-sm btn-pepsico">Ver todas</button>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Actividad</th>
-                        <th>Usuario</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>20/04/2025</td>
-                        <td>Calibración de sensores</td>
-                        <td>Carlos Méndez</td>
-                        <td><span class="badge bg-success">Completado</span></td>
-                        <td><a href="#" class="btn btn-sm btn-outline-primary">Detalles</a></td>
-                    </tr>
-                    <tr>
-                        <td>19/04/2025</td>
-                        <td>Ajuste de velocidad de conveyor</td>
-                        <td>María Gómez</td>
-                        <td><span class="badge bg-success">Completado</span></td>
-                        <td><a href="#" class="btn btn-sm btn-outline-primary">Detalles</a></td>
-                    </tr>
-                    <tr>
-                        <td>18/04/2025</td>
-                        <td>Prueba de sabores múltiples</td>
-                        <td>Juan Pérez</td>
-                        <td><span class="badge bg-warning">En revisión</span></td>
-                        <td><a href="#" class="btn btn-sm btn-outline-primary">Detalles</a></td>
-                    </tr>
-                    <tr>
-                        <td>17/04/2025</td>
-                        <td>Mantenimiento preventivo</td>
-                        <td>Luis Ramírez</td>
-                        <td><span class="badge bg-success">Completado</span></td>
-                        <td><a href="#" class="btn btn-sm btn-outline-primary">Detalles</a></td>
-                    </tr>
-                    <tr>
-                        <td>16/04/2025</td>
-                        <td>Instalación de nuevo sensor</td>
-                        <td>Ana López</td>
-                        <td><span class="badge bg-info">En progreso</span></td>
-                        <td><a href="#" class="btn btn-sm btn-outline-primary">Detalles</a></td>
-                    </tr>
-                </tbody>
-            </table>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Rendimiento Histórico</h5>
+                <div>
+                    <select class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                        <option>Últimos 7 días</option>
+                        <option>Últimos 30 días</option>
+                        <option>Últimos 90 días</option>
+                        <option>Este año</option>
+                    </select>
+                    <button class="btn btn-sm btn-pepsico ms-2">Actualizar</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-chart-line fa-3x mb-3"></i>
+                    <p>Seleccione un período para visualizar el rendimiento histórico</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -394,9 +203,10 @@
 {% block extra_scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Comisionamiento page loaded');
+        console.log('Deep Dive page loaded');
         
-        // Aquí se puede añadir código JavaScript específico para la página de Comisionamiento
+        // Aquí se puede añadir código JavaScript específico para la página Deep Dive
+        // Por ejemplo, gráficos, filtros dinámicos, etc.
     });
 </script>
 {% endblock %}

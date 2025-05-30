@@ -2,7 +2,7 @@
 
 {% block title %}Dashboard - PepsiCo{% endblock %}
 
-{% block page_title %}Dashboard{% endblock %}
+{% block page_title %}Ejercicios{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -35,7 +35,7 @@
                 <p class="dash-card-text">
                     Realice análisis detallados de los procesos de producción, identificando oportunidades de mejora y optimización.
                 </p>
-                <a href="{{ url_for('comicionamiento') }}" class="dash-card-link">
+                <a href="{{ url_for('deep_dive') }}" class="dash-card-link">
                     Acceder <i class="fas fa-arrow-right ms-1"></i>
                 </a>
             </div>
@@ -56,7 +56,7 @@
                 <p class="dash-card-text">
                     Gestione el proceso de comisionamiento de nuevas líneas de producción para bolsas de Frito-Lay.
                 </p>
-                <a href="{{ url_for('deep_dive') }}" class="dash-card-link">
+                <a href="{{ url_for('comicionamiento') }}" class="dash-card-link">
                     Acceder <i class="fas fa-arrow-right ms-1"></i>
                 </a>
             </div>
