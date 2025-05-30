@@ -206,7 +206,8 @@ def admin_lineas(plant_id):
     plant = Plant.query.get_or_404(plant_id)
     if request.method == 'POST':
         line_name = request.form['name']
-        new_line = Line(name=line_name, plant_id=plant.id)
+        tubos = request.form.get('tubos', type=int)  # Obtener la cantidad de tubos del formulario
+        new_line = Line(name=line_name, plant_id=plant.id, pipes=tubos)
         db.session.add(new_line)
         db.session.commit()
         flash("Línea agregada correctamente")
@@ -228,6 +229,7 @@ def edit_linea(plant_id, line_id):
         return redirect(url_for('login'))
     line = Line.query.get_or_404(line_id)
     line.name = request.form.get('name', line.name)
+    line.pipes = request.form.get('tubos', line.pipes, type=int)  # Actualizar la cantidad de tubos si viene en el formulario
     db.session.commit()
     flash("Línea actualizada correctamente")
     return redirect(url_for('admin_lineas', plant_id=plant_id))

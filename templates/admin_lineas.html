@@ -309,6 +309,12 @@
                         <i class="fas fa-barcode me-1"></i> #{{ line.id }}
                     </div>
                 </div>
+                <div class="line-card-body">
+                    <div class="line-stat">
+                        <div class="line-stat-value">{{ line.pipes or line.tubos or 0 }}</div>
+                        <div class="line-stat-label">Cantidad de tubos</div>
+                    </div>
+                </div>
                 <div class="line-card-footer">
                     <div class="d-flex justify-content-between">
                         <!-- Botón Gestionar (Editar) -->
@@ -342,7 +348,7 @@
                       </div>
                       <div class="mb-3">
                           <label for="editTubos{{ line.id }}" class="form-label">Cantidad de tubos</label>
-                          <input type="number" class="form-control" id="editTubos{{ line.id }}" name="tubos" value="{{ line.tubos or '' }}" min="1" required>
+                          <input type="number" class="form-control" id="editTubos{{ line.id }}" name="tubos" value="{{ line.pipes or line.tubos or '' }}" min="1" required>
                       </div>
                   </div>
                   <div class="modal-footer">
