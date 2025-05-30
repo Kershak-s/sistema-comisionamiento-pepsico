@@ -279,6 +279,12 @@
                             <label for="name">Nombre de la Línea</label>
                         </div>
                     </div>
+                    <div class="col-md-6 offset-md-3 mb-3">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="tubos" name="tubos" placeholder="Cantidad de tubos" min="1" required>
+                            <label for="tubos">Cantidad de tubos</label>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-submit-container">
                     <button type="button" class="btn btn-light me-2" data-bs-toggle="collapse" data-bs-target="#lineForm">Cancelar</button>
@@ -303,22 +309,49 @@
                         <i class="fas fa-barcode me-1"></i> #{{ line.id }}
                     </div>
                 </div>
-                <div class="line-card-body">
-                    
-                </div>
                 <div class="line-card-footer">
                     <div class="d-flex justify-content-between">
-                        <button class="btn btn-sm btn-frito-lay">
+                        <!-- Botón Gestionar (Editar) -->
+                        <button class="btn btn-sm btn-frito-lay" data-bs-toggle="modal" data-bs-target="#editLineModal{{ line.id }}">
                             <i class="fas fa-cogs me-1"></i> Gestionar
                         </button>
-                        <div>
-                            <button class="btn btn-sm btn-outline-danger">
+                        <!-- Botón Eliminar -->
+                        <form method="post" action="{{ url_for('delete_linea', plant_id=plant.id, line_id=line.id) }}" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas eliminar esta línea?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Modal Editar Línea -->
+        <div class="modal fade" id="editLineModal{{ line.id }}" tabindex="-1" aria-labelledby="editLineModalLabel{{ line.id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <form method="post" action="{{ url_for('edit_linea', plant_id=plant.id, line_id=line.id) }}">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editLineModalLabel{{ line.id }}"><i class="fas fa-edit me-2"></i>Editar Línea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="mb-3">
+                          <label for="editName{{ line.id }}" class="form-label">Nombre de la Línea</label>
+                          <input type="text" class="form-control" id="editName{{ line.id }}" name="name" value="{{ line.name }}" required>
+                      </div>
+                      <div class="mb-3">
+                          <label for="editTubos{{ line.id }}" class="form-label">Cantidad de tubos</label>
+                          <input type="number" class="form-control" id="editTubos{{ line.id }}" name="tubos" value="{{ line.tubos or '' }}" min="1" required>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-pepsico"><i class="fas fa-save me-1"></i> Guardar Cambios</button>
+                  </div>
+                </div>
+            </form>
+          </div>
         </div>
         {% endfor %}
     </div>
@@ -357,12 +390,15 @@
                         <small class="text-muted">{{ now.strftime('%d/%m/%Y') if now else '20/04/2025' }}</small>
                     </td>
                     <td class="line-actions">
-                        <button class="btn btn-sm btn-pepsico me-1">
+                        <button class="btn btn-sm btn-pepsico me-1" data-bs-target="#editLineModal{{ line.id }}" data-bs-toggle="modal">
                             <i class="fas fa-cogs"></i> Gestionar
                         </button>
-                        <button class="btn btn-sm btn-outline-danger">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+                        <form method="post" action="{{ url_for('delete_linea', plant_id=plant.id, line_id=line.id) }}" style="display:inline;"
+                            onsubmit="return confirm('¿Seguro que deseas eliminar esta línea?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}

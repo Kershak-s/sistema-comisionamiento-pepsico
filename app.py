@@ -209,6 +209,26 @@ def admin_lineas(plant_id):
         flash("Línea agregada correctamente")
     return render_template('admin_lineas.html', plant=plant)
 
+@app.route('/admin/plantas/<int:plant_id>/lineas/<int:line_id>/delete', methods=['POST'])
+def delete_linea(plant_id, line_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    line = Line.query.get_or_404(line_id)
+    db.session.delete(line)
+    db.session.commit()
+    flash("Línea eliminada correctamente")
+    return redirect(url_for('admin_lineas', plant_id=plant_id))
+
+@app.route('/admin/plantas/<int:plant_id>/lineas/<int:line_id>/edit', methods=['POST'])
+def edit_linea(plant_id, line_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    line = Line.query.get_or_404(line_id)
+    line.name = request.form.get('name', line.name)
+    db.session.commit()
+    flash("Línea actualizada correctamente")
+    return redirect(url_for('admin_lineas', plant_id=plant_id))
+
 # ===================== RUTAS PARA EL EJERCICIO "EFF DE EMPAQUE" =====================
 
 @app.route('/eff_empaque', methods=['GET'])
