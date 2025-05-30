@@ -744,7 +744,7 @@ def view_dme_capture(exercise_id, capture_id):
         "Bolsa en tubo (desplazamiento de film)", "Bolsas explotadas banda jirafa", "Bolsas por datos de calidad",
         "Sobrecarga de producto", "Bajo gramaje", "Atora miento producto",
         "Prueba nitrógeno", "Empalme (cinta roja)", "Bolsa pegada en bobina",
-        "Traslape incorrecto"
+        "Traslape incorrecto", "Otro (especificar en comentarios)"
     ]
     
     return render_template('dme_capture_detail.html', exercise=exercise, captura=captura, defect_types=defect_types)
