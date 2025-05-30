@@ -165,6 +165,34 @@
         max-height: 300px;
         object-fit: contain;
     }
+
+    .capture-table-container {
+        margin-bottom: 20px;
+        box-shadow: 0 4px 16px rgba(76, 175, 80, 0.08);
+    }
+
+    .capture-title {
+        background: linear-gradient(90deg, #0057a8 0%, #3984c9 100%);
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.75rem;
+        border-radius: 12px 12px 0 0;
+        margin-bottom: 1rem;
+    }
+
+    .excel-header-row {
+        background: linear-gradient(90deg, #0057a8 0%, #3984c9 100%);
+        color: #fff;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .table-striped tbody tr:nth-of-type(even) {
+        background-color: #ffffff;
+    }
 </style>
 {% endblock %}
 
@@ -219,60 +247,68 @@
 </div>
 
 <!-- Contenedor de Defectos -->
-<div class="defects-container">
-    <h5 class="mb-4"><i class="fas fa-exclamation-triangle me-2"></i>Defectos Registrados</h5>
+<div class="defects-container capture-table-container" style="margin-bottom: 20px; box-shadow: 0 4px 16px rgba(76, 175, 80, 0.08);">
+    <div class="capture-title" style="background: linear-gradient(90deg, #0057a8 0%, #3984c9 100%); color: white; font-weight: 600; font-size: 1.1rem;">
+        <i class="fas fa-exclamation-triangle me-2"></i> Defectos Registrados
+    </div>
 
     {% if captura.defectos and captura.defectos|length > 0 %}
-    {% for defecto in captura.defectos|sort(attribute='fecha_hora', reverse=true) %}
-    <div class="defect-card">
-        <div class="defect-header">
-            <h6 class="mb-0">{{ defecto.tipo }}</h6>
-            <span class="badge bg-primary">{{ defecto.hora_relativa }}</span>
-        </div>
-        <div class="defect-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="defect-info-item">
-                        <div class="defect-info-label">Cantidad</div>
-                        <div><strong>{{ defecto.cantidad }}</strong></div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="defect-info-item">
-                        <div class="defect-info-label">Fecha y Hora</div>
-                        <div><strong>{{ defecto.fecha_hora|fromiso|strftime('%d/%m/%Y %H:%M') }}</strong></div>
-                    </div>
-                </div>
-            </div>
-
-            {% if defecto.comentario %}
-            <div class="defect-info-item mt-2">
-                <div class="defect-info-label">Comentarios</div>
-                <div>{{ defecto.comentario }}</div>
-            </div>
-            {% endif %}
-
-            {% if defecto.imagen %}
-            <div class="defect-info-item mt-3">
-                <div class="defect-info-label">Imagen</div>
-                <div class="defect-image">
-                    <img src="{{ defecto.imagen }}" alt="Imagen del defecto" class="img-fluid">
-                </div>
-            </div>
-            {% endif %}
-
-            <div class="defect-actions">
-                <form
-                    action="{{ url_for('delete_dme_defect', exercise_id=exercise.id, capture_id=captura.id, defect_id=defecto.id) }}"
-                    method="POST" onsubmit="return confirm('¿Está seguro de eliminar este defecto?')">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="fas fa-trash-alt me-1"></i> Eliminar
-                    </button>
-                </form>
-            </div>
-        </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle mb-0">
+            <thead>
+                <tr class="excel-header-row" style="background: linear-gradient(90deg, #0057a8 0%, #3984c9 100%); color: #fff;">
+                    <th style="background: none; color: #fff;">Tipo</th>
+                    <th style="background: none; color: #fff;">Cantidad</th>
+                    <th style="background: none; color: #fff;">Fecha y Hora</th>
+                    <th style="background: none; color: #fff;">Comentarios</th>
+                    <th style="background: none; color: #fff;">Hora Relativa</th>
+                    <th style="background: none; color: #fff;">Imagen</th>
+                    <th style="background: none; color: #fff;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for defecto in captura.defectos|sort(attribute='fecha_hora', reverse=true) %}
+                <tr>
+                    <td >{{ defecto.tipo }}</td>
+                    <td ><strong>{{ defecto.cantidad }}</strong></td>
+                    <td >{{ defecto.fecha_hora|fromiso|strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>
+                        {% if defecto.comentario %}
+                            {{ defecto.comentario }}
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-primary">{{ defecto.hora_relativa }}</span>
+                    </td>
+                    <td>
+                        {% if defecto.imagen %}
+                        <button class="btn btn-sm btn-primary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#imgCollapse{{ loop.index }}" aria-expanded="false" aria-controls="imgCollapse{{ loop.index }}">
+                            Ver Imagen
+                        </button>
+                        <div class="collapse mt-2" id="imgCollapse{{ loop.index }}">
+                            <div class="defect-image">
+                                <img src="{{ defecto.imagen }}" alt="Imagen del defecto" class="img-fluid">
+                            </div>
+                        </div>
+                        {% else %}
+                        <span class="text-muted">Sin imagen</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_dme_defect', exercise_id=exercise.id, capture_id=captura.id, defect_id=defecto.id) }}"
+                            method="POST" onsubmit="return confirm('¿Está seguro de eliminar este defecto?')">
+                            <button type="submit" class="btn btn-danger btn-sm delete-capture" title="Eliminar defecto">
+                                <i class="fas fa-trash-alt me-1"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    {% endfor %}
     {% else %}
     <div class="no-defects">
         <i class="fas fa-exclamation-circle d-block"></i>
