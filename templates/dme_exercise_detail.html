@@ -193,13 +193,15 @@
                         <i class="fas fa-exclamation-triangle fa-lg"></i>
                     </div>
                     <div>
-                        {% set total_defects = 0 %}
+                        {% set defectos_lista = [] %}
                         {% for captura in data.capturas|default([]) %}
                             {% if captura.defectos is defined %}
-                                {% set total_defects = total_defects + captura.defectos|length %}
+                                {% for defecto in captura.defectos %}
+                                    {% set _ = defectos_lista.append(defecto.cantidad) %}
+                                {% endfor %}
                             {% endif %}
                         {% endfor %}
-                        <h3 class="mb-0">{{ total_defects }}</h3>
+                        <h3 class="mb-0">{{ defectos_lista|sum }}</h3>
                         <p class="text-muted mb-0">Defectos registrados</p>
                     </div>
                 </div>
