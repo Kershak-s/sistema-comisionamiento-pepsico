@@ -120,10 +120,42 @@
     <div class="col-lg-6">
         <div class="dme-card card">
             <div class="dme-card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="fas fa-search-plus me-2"></i>
-                    DME #{{ exercise.id }}
-                </h5>
+                <div style="width: 100%;">
+                    <div class="d-flex align-items-center" style="gap: 0.5rem;">
+                        <i class="fas fa-search-plus me-2"></i>
+                        <span id="dme-nombre-{{ exercise.id }}" class="fw-semibold" style="font-size: 1.15rem;">
+                            {{ exercise.nombre or ('DME #' ~ exercise.id) }}
+                        </span>
+                        <button type="button"
+                            class="btn btn-sm btn-outline-light px-2 py-0 ms-1"
+                            style="border-radius: 50%;"
+                            title="Editar nombre"
+                            onclick="toggleEditNombre({{ exercise.id }}); return false;">
+                            <i class="fas fa-pen fa-xs"></i>
+                        </button>
+                    </div>
+                    <form id="edit-nombre-form-{{ exercise.id }}"
+                          action="{{ url_for('edit_dme_name', exercise_id=exercise.id) }}"
+                          method="POST"
+                          class="mt-2"
+                          style="display: none;">
+                        <div class="input-group input-group-sm" style="max-width: 320px;">
+                            <input type="text"
+                                   name="nombre"
+                                   value="{{ exercise.nombre or '' }}"
+                                   class="form-control"
+                                   placeholder="Nombre del DME"
+                                   maxlength="150"
+                                   required>
+                            <button type="submit" class="btn btn-success" title="Guardar nombre">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary" title="Cancelar" onclick="toggleEditNombre({{ exercise.id }}, true)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 <span class="dme-badge bg-light text-dark">
                     {{ exercise.created_at.strftime('%d/%m/%Y') }}
                 </span>
@@ -201,5 +233,17 @@
         console.log('DME #{{ exercise.id }} - Datos cargados:', JSON.parse('{{ exercise.data|tojson|safe }}'));
         {% endfor %}
     });
+    
+    function toggleEditNombre(id, cancelar = false) {
+        const nombreSpan = document.getElementById('dme-nombre-' + id);
+        const form = document.getElementById('edit-nombre-form-' + id);
+        if (form.style.display === 'none' && !cancelar) {
+            form.style.display = 'block';
+            nombreSpan.style.display = 'none';
+        } else {
+            form.style.display = 'none';
+            nombreSpan.style.display = '';
+        }
+    }
 </script>
 {% endblock %}

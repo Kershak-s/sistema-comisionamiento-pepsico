@@ -868,6 +868,18 @@ def delete_dme_defect(exercise_id, capture_id, defect_id):
     flash("Defecto no encontrado")
     return redirect(url_for('view_dme_capture', exercise_id=exercise_id, capture_id=capture_id))
 
+@app.route('/dme_exercises/<int:exercise_id>/edit_name', methods=['POST'])
+def edit_dme_name(exercise_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    exercise = DmeExercise.query.get_or_404(exercise_id)
+    nombre = request.form.get('nombre', '').strip()
+    exercise.nombre = nombre
+    exercise.updated_at = datetime.now()
+    db.session.commit()
+    flash("Nombre del DME actualizado")
+    return redirect(url_for('dme_exercises'))
+
 # ===================== RUTAS PARA DME AGRUPADO POR HORAS =====================
 
 @app.route('/dme_exercises/<int:exercise_id>/captures', methods=['GET'])
