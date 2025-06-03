@@ -1058,5 +1058,11 @@ def update_dme_defecto_cantidad(exercise_id, capture_id):
                     return jsonify(success=True)
     return jsonify(success=False, message="Defecto no encontrado"), 404
 
+@app.route('/pesos')
+def pesos():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('pesos.html')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')

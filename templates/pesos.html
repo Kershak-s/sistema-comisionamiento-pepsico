@@ -1,0 +1,822 @@
+{% extends "base.html" %}
+{% block title %}Control de Pesos{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .card{
+        background-color: var(--pepsico-blue);
+    }
+
+    .pesos-table-container {
+        background-color: white;
+        border-radius: 12px;
+        padding: 2rem 1.5rem 1.5rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 87, 168, 0.08);
+    }
+    .pesos-table-title {
+        padding: 1rem 1.5rem;
+        margin: 0;
+        background-color:  var(--pepsico-blue);
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-radius: 10px 10px 0 0;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .pesos-table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .pesos-table thead th {
+        font-weight: 600;
+        vertical-align: middle;
+        background-color: var(--pepsico-blue);
+        color: #fff;
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.95rem;
+        height: 50px;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .pesos-table tbody td {
+        vertical-align: middle;
+        padding: 0.5rem;
+        height: 48px;
+        background-color: #fff;
+        text-align: center;
+        font-size: 0.97rem;
+    }
+    .pesos-table tbody tr:hover {
+        background-color: #f5faff;
+    }
+    .pesos-table .badge {
+        font-size: 0.95em;
+        padding: 0.5em 0.8em;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+    .pesos-table .btn {
+        border-radius: 6px;
+        font-size: 0.95em;
+        margin: 0 2px;
+        transition: all 0.2s;
+    }
+    .pesos-table .btn-info {
+        color: #fff;
+        border: none;
+    }
+    .pesos-table .btn-warning {
+        color: #333;
+        border: none;
+    }
+    .pesos-table .btn-danger {
+        color: #fff;
+        border: none;
+    }
+    .pesos-table .btn-success {
+        color: #fff;
+        border: none;
+    }
+    .pesos-table .btn:hover {
+        filter: brightness(0.95);
+        box-shadow: 0 2px 8px rgba(0,87,168,0.08);
+        transform: translateY(-1px);
+    }
+    @media (max-width: 991px) {
+        .pesos-table-container {
+            padding: 1rem 0.5rem;
+        }
+        .pesos-table-title {
+            padding: 0.7rem 1rem;
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container-fluid py-4">
+    <!-- Titulo y Boton de nueva captura -->
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h2 class="mb-0"><i class="fas fa-weight-hanging option-icon text-black"></i> Carga de Pesos</h2>
+            <button type="button" id="btnNuevaCaptura" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#modalNuevaCaptura">
+                <i class="fas fa-plus me-2"></i>Nueva Captura
+            </button>
+        </div>
+    </div> 
+
+    <!-- Mensajes -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- Datos Pesadora -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-weight fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Peso medio</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">27 g</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-balance-scale-left fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Peso mínimo</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">23 g</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-balance-scale-right fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Peso máximo</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">30 g</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-chart-line fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Desviación estándar</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">5 g</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-exclamation-circle fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Sobrepeso</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">5 g</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-percent fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Eficiencia CCW</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">0.0 %</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-boxes fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1"># Paquetes con bajo peso</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">20</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-ruler-combined fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Cp</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">0.564</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-ruler fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Cpk</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">0.442</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-ruler-horizontal fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Pp</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">0.523</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-ruler-vertical fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Ppk</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">0.398</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-weight-hanging fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Kilos de sobrepeso</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">12 g</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
+                    <div class="card-body text-center p-2">
+                        <i class="fas fa-chart-bar fa-lg mb-1"></i>
+                        <h6 class="card-title text-white mb-1">Proyección de sobrepeso en 1 año</h6>
+                        <p class="card-text fs-6 fw-bold mb-0">132 Kg</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario Modal para Captura de Datos -->
+    <div class="modal fade" id="modalNuevaCaptura" tabindex="-1" aria-labelledby="nuevaCapturaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="nuevaCapturaLabel"><i class="fas fa-plus-circle me-2"></i>Nueva Captura
+                        de
+                        Pesos</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form id="formNuevaCaptura" method="POST" action="{{ url_for('pesos') }}">
+                    <div class="modal-body">
+                        <div class="row">
+                            <input type="hidden" name="fecha" value="{{ now.strftime('%Y-%m-%d') }}">
+                            <input type="hidden" name="user_id" value="{{ session.get('user_id', '') }}">
+                            <div class="col-md-4 mb-3">
+                                <label for="turno" class="form-label">Turno</label>
+                                <select class="form-select" id="turno" name="turno" required>
+                                    <option value="">Seleccione turno</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="producto_id" class="form-label">Producto</label>
+                                <select class="form-select" id="producto_id" name="producto_id" required>
+                                    {% for producto in productos %}
+                                    <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="maquina_id" class="form-label">Máquina</label>
+                                <select class="form-select" id="maquina_id" name="maquina_id" required>
+                                    {% for maquina in maquinas %}
+                                    <option value="{{ maquina.id }}">{{ maquina.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="peso_fijado" class="form-label">Peso Fijado</label>
+                                <input type="number" class="form-control" id="peso_fijado" name="peso_fijado" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="limite_superior" class="form-label">Límite Superior</label>
+                                <input type="number" class="form-control" id="limite_superior" name="limite_superior"
+                                    required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="control_promedio" class="form-label">Control Promedio</label>
+                                <select class="form-select" id="control_promedio" name="control_promedio" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="ON">ON</option>
+                                    <option value="OFF">OFF</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="compensacion" class="form-label">Compensación</label>
+                                <input type="number" step="0.01" class="form-control" id="compensacion"
+                                    name="compensacion" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="intervalo_auto_cero" class="form-label">Intervalo Auto Cero</label>
+                                <input type="number" class="form-control" id="intervalo_auto_cero"
+                                    name="intervalo_auto_cero" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="numero_estable" class="form-label">Número Estable</label>
+                                <input type="number" class="form-control" id="numero_estable" name="numero_estable"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Captura</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de registros -->
+    <div class="pesos-table-container">
+        <div class="pesos-table-title">
+            <i class="fas fa-database me-2"></i> Registros Pesos
+        </div>
+        <div class="pesos-table-responsive">
+            <table class="table table-bordered table-hover pesos-table" id="pesosDatatable">
+                <thead>
+                    <tr>
+                        <th>Máquina</th>
+                        <th>Producto</th>
+                        <th>Turno</th>
+                        <th>Operador</th>
+                        <th>Peso Fijado</th>
+                        <th>Límite Superior</th>
+                        <th>Control Promedio</th>
+                        <th>Compensación</th>
+                        <th>Intervalo Auto Cero</th>
+                        <th>Número Estable</th>
+                        <th>Pesos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Ejemplo 1 -->
+                    <tr>
+                        <td>Pesadora 1</td>
+                        <td>Papas Clásicas</td>
+                        <td>1</td>
+                        <td>juanperez</td>
+                        <td>27</td>
+                        <td>30</td>
+                        <td><span class="badge bg-success">ON</span></td>
+                        <td>0.5</td>
+                        <td>10</td>
+                        <td>5</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalPesos1" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <!-- Modal ejemplo -->
+                            <div class="modal fade" id="modalPesos1" tabindex="-1" aria-labelledby="modalPesosLabel1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title" id="modalPesosLabel1">Pesos de la Carga #1</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <ul class="list-group pesos-paginados" id="listaPesos1">
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Peso: 27.1 kg
+                                                    <button class="btn btn-sm btn-danger eliminar-peso" data-id="1" title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Peso: 26.8 kg
+                                                    <button class="btn btn-sm btn-danger eliminar-peso" data-id="2" title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Peso: 27.5 kg
+                                                    <button class="btn btn-sm btn-danger eliminar-peso" data-id="3" title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                            <nav>
+                                                <ul class="pagination justify-content-center mt-3" id="paginacionPesos1"></ul>
+                                            </nav>
+                                            <button class="btn btn-sm btn-success mt-3" data-bs-toggle="modal" data-bs-target="#modalAgregarPeso1">
+                                                <i class="fas fa-plus"></i> Añadir Peso
+                                            </button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal para añadir nuevo peso -->
+                            <div class="modal fade" id="modalAgregarPeso1" tabindex="-1" aria-labelledby="modalAgregarPesoLabel1" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <form>
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="modalAgregarPesoLabel1">Nuevo Peso</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="pesoInput1" class="form-label">Peso (kg)</label>
+                                                    <input type="number" step="0.01" min="0" class="form-control" id="pesoInput1" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditarCaptura1" title="Editar">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger eliminar-registro" data-id="1" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <!-- Modal editar ejemplo -->
+                            <div class="modal fade" id="modalEditarCaptura1" tabindex="-1" aria-labelledby="modalEditarLabel1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title" id="modalEditarLabel1"><i
+                                                    class="fas fa-edit me-2"></i>Editar
+                                                Captura</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <form>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Turno</label>
+                                                        <select class="form-select" required>
+                                                            <option value="1" selected>1</option>
+                                                            <option value="2">2</option>
+                                                            <option value="3">3</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Producto</label>
+                                                        <select class="form-select" required>
+                                                            <option selected>Papas Clásicas</option>
+                                                            <option>Papas BBQ</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Máquina</label>
+                                                        <select class="form-select" required>
+                                                            <option selected>Pesadora 1</option>
+                                                            <option>Pesadora 2</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Peso Fijado</label>
+                                                        <input type="number" class="form-control" value="27" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Límite Superior</label>
+                                                        <input type="number" class="form-control" value="30" required>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Control Promedio</label>
+                                                        <select class="form-select" required>
+                                                            <option value="ON" selected>ON</option>
+                                                            <option value="OFF">OFF</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Compensación</label>
+                                                        <input type="number" step="0.01" class="form-control" value="0.5" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">Intervalo Auto Cero</label>
+                                                        <input type="number" class="form-control" value="10" required>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">Número Estable</label>
+                                                        <input type="number" class="form-control" value="5" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-warning">Actualizar</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Ejemplo 2 -->
+                    <tr>
+                        <td>Pesadora 2</td>
+                        <td>Papas BBQ</td>
+                        <td>2</td>
+                        <td>mariagarcia</td>
+                        <td>25</td>
+                        <td>28</td>
+                        <td><span class="badge bg-danger">OFF</span></td>
+                        <td>0.3</td>
+                        <td>8</td>
+                        <td>4</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modalPesos2" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <!-- Modal ejemplo -->
+                            <div class="modal fade" id="modalPesos2" tabindex="-1" aria-labelledby="modalPesosLabel2" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title" id="modalPesosLabel2">Pesos de la Carga #2</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <ul class="list-group pesos-paginados" id="listaPesos2">
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Peso: 25.2 kg
+                                                    <button class="btn btn-sm btn-danger eliminar-peso" data-id="4" title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Peso: 24.9 kg
+                                                    <button class="btn btn-sm btn-danger eliminar-peso" data-id="5" title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                            <nav>
+                                                <ul class="pagination justify-content-center mt-3" id="paginacionPesos2"></ul>
+                                            </nav>
+                                            <button class="btn btn-sm btn-success mt-3" data-bs-toggle="modal" data-bs-target="#modalAgregarPeso2">
+                                                <i class="fas fa-plus"></i> Añadir Peso
+                                            </button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal para añadir nuevo peso -->
+                            <div class="modal fade" id="modalAgregarPeso2" tabindex="-1" aria-labelledby="modalAgregarPesoLabel2" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <form>
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="modalAgregarPesoLabel2">Nuevo Peso</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="pesoInput2" class="form-label">Peso (kg)</label>
+                                                    <input type="number" step="0.01" min="0" class="form-control" id="pesoInput2" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditarCaptura2" title="Editar">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger eliminar-registro" data-id="2" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <!-- Modal editar ejemplo -->
+                            <div class="modal fade" id="modalEditarCaptura2" tabindex="-1" aria-labelledby="modalEditarLabel2" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title" id="modalEditarLabel2"><i class="fas fa-edit me-2"></i>Editar Captura</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <form>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Turno</label>
+                                                        <select class="form-select" required>
+                                                            <option value="1">1</option>
+                                                            <option value="2" selected>2</option>
+                                                            <option value="3">3</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Producto</label>
+                                                        <select class="form-select" required>
+                                                            <option>Papas Clásicas</option>
+                                                            <option selected>Papas BBQ</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Máquina</label>
+                                                        <select class="form-select" required>
+                                                            <option>Pesadora 1</option>
+                                                            <option selected>Pesadora 2</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Peso Fijado</label>
+                                                        <input type="number" class="form-control" value="25" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Límite Superior</label>
+                                                        <input type="number" class="form-control" value="28" required>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Control Promedio</label>
+                                                        <select class="form-select" required>
+                                                            <option value="ON">ON</option>
+                                                            <option value="OFF" selected>OFF</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Compensación</label>
+                                                        <input type="number" step="0.01" class="form-control" value="0.3" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">Intervalo Auto Cero</label>
+                                                        <input type="number" class="form-control" value="8" required>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">Número Estable</label>
+                                                        <input type="number" class="form-control" value="4" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-warning">Actualizar</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Inicializar DataTable con scroll horizontal, sin paginación, sin búsqueda, sin orden
+    $(document).ready(function() {
+        $('#pesosDatatable').DataTable({
+            scrollX: true,
+            paging: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            autoWidth: false,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
+            }
+        });
+    });
+
+    // Eliminar registro (AJAX)
+    $(document).on('click', '.eliminar-registro', function () {
+        const id = $(this).data('id');
+        const $row = $(this).closest('tr');
+        if (confirm('¿Está seguro que desea eliminar este registro? Esta acción no puede deshacerse.')) {
+            $row.addClass('deleting-row');
+            $.ajax({
+                url: '/eliminar_registro_peso/' + id,
+                method: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        $row.fadeOut(400, function () {
+                            $(this).remove();
+                        });
+                    } else {
+                        alert('Error al eliminar: ' + response.message);
+                        $row.removeClass('deleting-row');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error en la operación de eliminación', error);
+                    alert('Ha ocurrido un error al intentar eliminar el registro.');
+                    $row.removeClass('deleting-row');
+                }
+            });
+        }
+    });
+
+    // Paginación personalizada para listas con clase .pesos-paginados
+    const elementosPorPagina = 5;
+    document.querySelectorAll('.pesos-paginados').forEach((lista) => {
+        const items = Array.from(lista.querySelectorAll('.list-group-item'));
+        const id = lista.id.replace('listaPesos', '');
+        const paginacion = document.getElementById('paginacionPesos' + id);
+        if (items.length <= elementosPorPagina) return;
+        let paginaActual = 1;
+        const totalPaginas = Math.ceil(items.length / elementosPorPagina);
+        function mostrarPagina(pagina) {
+            paginaActual = pagina;
+            items.forEach((item, index) => {
+                item.style.display = (index >= (pagina - 1) * elementosPorPagina && index < pagina * elementosPorPagina) ? '' : 'none';
+            });
+            paginacion.innerHTML = '';
+            for (let i = 1; i <= totalPaginas; i++) {
+                const li = document.createElement('li');
+                li.className = 'page-item' + (i === pagina ? ' active' : '');
+                const a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.textContent = i;
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    mostrarPagina(i);
+                });
+                li.appendChild(a);
+                paginacion.appendChild(li);
+            }
+        }
+        mostrarPagina(1);
+    });
+
+    // Manejar la eliminación de pesos individuales
+    document.querySelectorAll('.eliminar-peso').forEach(button => {
+        button.addEventListener('click', function () {
+            const pesoId = this.dataset.id;
+            const listItem = this.closest('li');
+            if (confirm('¿Está seguro que desea eliminar este peso?')) {
+                fetch(`/eliminar_peso/${pesoId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            listItem.remove();
+                            alert(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Ocurrió un error al intentar eliminar el peso.');
+                    });
+            }
+        });
+    });
+</script>
+{% endblock %}
