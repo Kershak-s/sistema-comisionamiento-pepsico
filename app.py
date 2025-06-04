@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from models import db, User, BusinessUnit, Plant, Line, Flavor, EmpaqueExercise, DmeExercise, PesoRegistro
 from flask_migrate import Migrate
+import numpy as np
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tu_clave_secreta'
@@ -1143,6 +1144,7 @@ def pesos_detail():
         flash("Registro de peso actualizado correctamente", "success")
         return redirect(url_for('pesos_detail', id=ejercicio.id))
     # Al mostrar, extraer los datos del JSON
+    pesos_filtrados = []
     if ejercicio:
         try:
             data = json.loads(ejercicio.data) if ejercicio.data else {}
@@ -1157,7 +1159,83 @@ def pesos_detail():
         ejercicio.compensacion = data.get('compensacion')
         ejercicio.intervalo_auto_cero = data.get('intervalo_auto_cero')
         ejercicio.numero_estable = data.get('numero_estable')
-    return render_template('pesos_detail.html', ejercicio=ejercicio, productos=sabores, maquinas=[], session=session, registros=registros)
+        # Guardar la lista de pesos distintos de 0
+        pesos_filtrados = [p for p in data.get('pesos', []) if p != 0]
+        pesos_filtrados_NP = np.array(pesos_filtrados)
+
+        # Analisis de capacidad
+        promedio = sum(pesos_filtrados)/len(pesos_filtrados) if pesos_filtrados else 0
+        analisis_de_capacidad = calcular_capacidad_proceso(pesos_filtrados, ejercicio.peso_fijado)
+
+        datos = {
+            "Peso medio": promedio,
+            "Peso minimo": min(pesos_filtrados) if pesos_filtrados else 0,
+            "Peso maximo": max(pesos_filtrados) if pesos_filtrados else 0,
+            "Desviacion": np.std(pesos_filtrados_NP) if len(pesos_filtrados) > 1 else 0,
+            "Sobrepeso": ejercicio.peso_fijado - (sum(pesos_filtrados)/len(pesos_filtrados)) if pesos_filtrados else 0,
+            "Eficiencia CCW": 0,
+            "Paquetes bajo peso": sum(1 for p in pesos_filtrados if ejercicio.peso_fijado and p < ejercicio.peso_fijado),
+            "Cp": analisis_de_capacidad["Cp"],
+            "Cpk": analisis_de_capacidad["Cpk"],
+            "Pp": analisis_de_capacidad["Pp"],
+            "Ppk": analisis_de_capacidad["Ppk"],
+            # "Kilos de sobrepeso": sum(1 for p in pesos_filtrados if (p-ejercicio.peso_fijado+0.4) >=0),
+            "Kilos de sobrepeso": sum(kilos_de_sobrepeso(pesos_filtrados, ejercicio.peso_fijado)),
+            "Proyeccion de sobrepeso": (sum(kilos_de_sobrepeso(pesos_filtrados, ejercicio.peso_fijado))*3*24*12)*((480*100*0.5)/210),
+        }
+    return render_template('pesos_detail.html', datos=datos, ejercicio=ejercicio, productos=sabores, maquinas=[], session=session, registros=registros, pesos_filtrados=pesos_filtrados)
+
+def kilos_de_sobrepeso(pesos, peso_fijado):
+        for peso in pesos:
+            if peso > peso_fijado:
+                yield (peso - peso_fijado)/1000
+
+def calcular_capacidad_proceso(datos, peso_fijado):
+    def convertir_a_grupos(lista_plana, tamaño_grupo):
+        return [lista_plana[i:i+tamaño_grupo] for i in range(0, len(lista_plana), tamaño_grupo)]
+    
+    ES = peso_fijado + 1
+    EI = peso_fijado - 1
+
+    datos = convertir_a_grupos(datos, 5)
+
+    datos = np.array(datos)
+    medias = np.mean(datos, axis=1)
+    rangos = np.ptp(datos, axis=1)  # ptp = max - min
+
+    media_de_medias = np.mean(medias)
+    rango_promedio = np.mean(rangos)
+
+    # Estimaciones de desviaciones
+    d2 = 2.223  # constante para muestras de tamaño 5 (ajustar si es diferente)
+    sigma_corto_plazo = rango_promedio / d2
+    sigma_largo_plazo = np.std(datos.flatten(), ddof=1)
+
+    # Cp y Pp
+    cp = (ES - EI) / (6 * sigma_corto_plazo)
+    pp = (ES - EI) / (6 * sigma_largo_plazo)
+
+    # Cpi, Cps, Cpk
+    cpi = (media_de_medias - EI) / (3 * sigma_corto_plazo)
+    cps = (ES - media_de_medias) / (3 * sigma_corto_plazo)
+    cpk = min(cpi, cps)
+
+    # Ppi, Pps, Ppk
+    ppi = (media_de_medias - EI) / (3 * sigma_largo_plazo)
+    pps = (ES - media_de_medias) / (3 * sigma_largo_plazo)
+    ppk = min(ppi, pps)
+
+    return {
+        "Cp": cp,
+        "Cpk": cpk,
+        "Cpi": cpi,
+        "Cps": cps,
+        "Pp": pp,
+        "Ppk": ppk,
+        "Ppi": ppi,
+        "Pps": pps,
+    }
+
 
 @app.route('/editar_registro_peso/<int:id>', methods=['GET', 'POST'])
 def editar_registro_peso(id):
