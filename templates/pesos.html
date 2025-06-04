@@ -128,7 +128,7 @@
         <div class="dme-card card">
             <div class="dme-card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold" style="font-size: 1.15rem;">
-                    {{ ejercicio.nombre or ('Pesos #' ~ ejercicio.id) }}
+                    {{ 'Pesos #' ~ ejercicio.id }}
                 </span>
                 <span class="dme-badge bg-light text-dark">
                     {{ ejercicio.fecha.strftime('%d/%m/%Y') }}

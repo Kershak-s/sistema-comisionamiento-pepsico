@@ -1081,7 +1081,7 @@ def new_peso_ejercicio():
         flash("Debe seleccionar BU, Planta y Línea", "danger")
         return redirect(url_for('pesos'))
 
-    nuevo = PesoRegistro(nombre=nombre, linea_id=linea_id, fecha=datetime.now())
+    nuevo = PesoRegistro(linea_id=linea_id, fecha=datetime.now())
     db.session.add(nuevo)
     db.session.commit()
     flash("Ejercicio de peso creado correctamente", "success")
@@ -1104,36 +1104,60 @@ def pesos_detail():
     ejercicio_id = request.args.get('id', type=int)
     ejercicio = PesoRegistro.query.get(ejercicio_id) if ejercicio_id else None
     sabores = Flavor.query.all()
-    if request.method == 'POST':
-        sabor_id = request.form.get('producto_id')
-        turno = request.form.get('turno')
-        maquina = request.form.get('maquina_id')
-        peso_fijado = request.form.get('peso_fijado', type=float)
-        limite_superior = request.form.get('limite_superior', type=float)
-        control_promedio = request.form.get('control_promedio')
-        compensacion = request.form.get('compensacion', type=float)
-        intervalo_auto_cero = request.form.get('intervalo_auto_cero', type=int)
-        numero_estable = request.form.get('numero_estable', type=int)
-        usuario = session.get('username', 'desconocido')
-
-        registro = PesoRegistro(
-            sabor_id=sabor_id,
-            turno=turno,
-            maquina=maquina,
-            peso_fijado=peso_fijado,
-            limite_superior=limite_superior,
-            control_promedio=control_promedio,
-            compensacion=compensacion,
-            intervalo_auto_cero=intervalo_auto_cero,
-            numero_estable=numero_estable,
-            usuario=usuario,
-        )
-        db.session.add(registro)
+    registros = []
+    if ejercicio:
+        # Solo agregar a registros si tiene datos relevantes
+        try:
+            data = json.loads(ejercicio.data) if ejercicio.data else {}
+        except Exception:
+            data = {}
+        # Considera relevante si tiene turno, sabor_id, maquina, etc.
+        if data.get('turno') or data.get('sabor_id') or data.get('maquina'):
+            registros = [ejercicio]
+    if request.method == 'POST' and ejercicio:
+        # Guardar todos los campos en el JSON data
+        data = {
+            "sabor_id": request.form.get('producto_id'),
+            "turno": request.form.get('turno'),
+            "maquina": request.form.get('maquina_id'),
+            "peso_fijado": request.form.get('peso_fijado', type=float),
+            "limite_superior": request.form.get('limite_superior', type=float),
+            "control_promedio": request.form.get('control_promedio'),
+            "compensacion": request.form.get('compensacion', type=float),
+            "intervalo_auto_cero": request.form.get('intervalo_auto_cero', type=int),
+            "numero_estable": request.form.get('numero_estable', type=int),
+            "usuario": session.get('username', 'desconocido')
+        }
+        # Mantener los pesos individuales si ya existen
+        try:
+            prev_data = json.loads(ejercicio.data) if ejercicio.data else {}
+        except Exception:
+            prev_data = {}
+        if 'pesos' in prev_data:
+            data['pesos'] = prev_data['pesos']
+        if 'cantidad_pesos' in prev_data:
+            data['cantidad_pesos'] = prev_data['cantidad_pesos']
+        ejercicio.data = json.dumps(data)
+        ejercicio.usuario = session.get('username', 'desconocido')
         db.session.commit()
-        flash("Registro de peso guardado correctamente", "success")
-        return redirect(url_for('pesos_detail'))
-
-    return render_template('pesos_detail.html', ejercicio=ejercicio, productos=sabores, maquinas=[], session=session)
+        flash("Registro de peso actualizado correctamente", "success")
+        return redirect(url_for('pesos_detail', id=ejercicio.id))
+    # Al mostrar, extraer los datos del JSON
+    if ejercicio:
+        try:
+            data = json.loads(ejercicio.data) if ejercicio.data else {}
+        except Exception:
+            data = {}
+        ejercicio.turno = data.get('turno')
+        ejercicio.sabor_id = data.get('sabor_id')
+        ejercicio.maquina = data.get('maquina')
+        ejercicio.peso_fijado = data.get('peso_fijado')
+        ejercicio.limite_superior = data.get('limite_superior')
+        ejercicio.control_promedio = data.get('control_promedio')
+        ejercicio.compensacion = data.get('compensacion')
+        ejercicio.intervalo_auto_cero = data.get('intervalo_auto_cero')
+        ejercicio.numero_estable = data.get('numero_estable')
+    return render_template('pesos_detail.html', ejercicio=ejercicio, productos=sabores, maquinas=[], session=session, registros=registros)
 
 @app.route('/editar_registro_peso/<int:id>', methods=['GET', 'POST'])
 def editar_registro_peso(id):
@@ -1141,30 +1165,40 @@ def editar_registro_peso(id):
         return jsonify(success=False, message="No autorizado")
     registro = PesoRegistro.query.get_or_404(id)
     if request.method == 'POST':
-        data = request.json
-        registro.turno = data.get('turno')
-        registro.sabor_id = data.get('producto_id')
-        registro.maquina = data.get('maquina_id')
-        registro.peso_fijado = data.get('peso_fijado', 0)
-        registro.limite_superior = data.get('limite_superior', 0)
-        registro.control_promedio = data.get('control_promedio')
-        registro.compensacion = data.get('compensacion', 0)
-        registro.intervalo_auto_cero = data.get('intervalo_auto_cero', 0)
-        registro.numero_estable = data.get('numero_estable', 0)
+        data_json = registro.data
+        try:
+            data = json.loads(data_json) if data_json else {}
+        except Exception:
+            data = {}
+        req = request.json
+        data['turno'] = req.get('turno')
+        data['sabor_id'] = req.get('producto_id')
+        data['maquina'] = req.get('maquina_id')
+        data['peso_fijado'] = float(req.get('peso_fijado', 0))
+        data['limite_superior'] = float(req.get('limite_superior', 0))
+        data['control_promedio'] = req.get('control_promedio')
+        data['compensacion'] = float(req.get('compensacion', 0))
+        data['intervalo_auto_cero'] = int(req.get('intervalo_auto_cero', 0))
+        data['numero_estable'] = int(req.get('numero_estable', 0))
+        registro.data = json.dumps(data)
         db.session.commit()
         return jsonify(success=True)
     # GET: devolver datos del registro
+    try:
+        data = json.loads(registro.data) if registro.data else {}
+    except Exception:
+        data = {}
     return jsonify(
         id=registro.id,
-        turno=registro.turno,
-        producto_id=registro.sabor_id,
-        maquina_id=registro.maquina,
-        peso_fijado=registro.peso_fijado,
-        limite_superior=registro.limite_superior,
-        control_promedio=registro.control_promedio,
-        compensacion=registro.compensacion,
-        intervalo_auto_cero=registro.intervalo_auto_cero,
-        numero_estable=registro.numero_estable
+        turno=data.get('turno'),
+        producto_id=data.get('sabor_id'),
+        maquina_id=data.get('maquina'),
+        peso_fijado=data.get('peso_fijado'),
+        limite_superior=data.get('limite_superior'),
+        control_promedio=data.get('control_promedio'),
+        compensacion=data.get('compensacion'),
+        intervalo_auto_cero=data.get('intervalo_auto_cero'),
+        numero_estable=data.get('numero_estable')
     )
 
 @app.route('/obtener_pesos_individuales/<int:id>', methods=['GET'])

@@ -200,8 +200,8 @@
 {% endblock %}
 
 {% block content %}
-<a href="{{ url_for('comicionamiento') }}" class="back-link">
-    <i class="fas fa-arrow-left"></i> Volver a Comicionamiento
+<a href="{{ url_for('pesos') }}" class="back-link">
+    <i class="fas fa-arrow-left"></i> Volver a Carga de Pesos
 </a>
 
 <main class="container-fluid py-4">
@@ -363,7 +363,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <form id="formNuevaCaptura" method="POST" action="{{ url_for('pesos') }}">
+                <form id="formNuevaCaptura" method="POST" action="{{ url_for('pesos_detail', id=ejercicio.id) }}">
                     <div class="modal-body">
                         <div class="row">
                             <input type="hidden" name="fecha" value="{{ now.strftime('%Y-%m-%d') }}">
@@ -580,25 +580,33 @@
                 </thead>
                 <tbody>
                     {% for r in registros %}
-                    <tr>
-                        <td>{{ r.maquina or '' }}</td>
-                        <td>{{ r.sabor.name }}</td>
-                        <td>{{ r.turno or '' }}</td>
-                        <td>{{ r.usuario or '' }}</td>
-                        <td>{{ r.peso_fijado or '' }}</td>
-                        <td>{{ r.limite_superior or '' }}</td>
+                      {% set data = r.data | fromjson %}
+                      <tr>
+                        <td>{{ data.maquina or '' }}</td>
                         <td>
-                            {% if r.control_promedio == 'ON' %}
-                                <span class="badge bg-success">ON</span>
-                            {% elif r.control_promedio == 'OFF' %}
-                                <span class="badge bg-danger">OFF</span>
-                            {% else %}
-                                {{ r.control_promedio or '' }}
-                            {% endif %}
+                          {% set sabor_id = data.sabor_id if 'sabor_id' in data else None %}
+                          {% if sabor_id %}
+                            {% for producto in productos %}
+                              {% if producto.id == sabor_id|int %}{{ producto.name }}{% endif %}
+                            {% endfor %}
+                          {% endif %}
                         </td>
-                        <td>{{ r.compensacion or '' }}</td>
-                        <td>{{ r.intervalo_auto_cero or '' }}</td>
-                        <td>{{ r.numero_estable or '' }}</td>
+                        <td>{{ data.turno or '' }}</td>
+                        <td>{{ r.usuario or '' }}</td>
+                        <td>{{ data.peso_fijado or '' }}</td>
+                        <td>{{ data.limite_superior or '' }}</td>
+                        <td>
+                          {% if data.control_promedio == 'ON' %}
+                            <span class="badge bg-success">ON</span>
+                          {% elif data.control_promedio == 'OFF' %}
+                            <span class="badge bg-danger">OFF</span>
+                          {% else %}
+                            {{ data.control_promedio or '' }}
+                          {% endif %}
+                        </td>
+                        <td>{{ data.compensacion or '' }}</td>
+                        <td>{{ data.intervalo_auto_cero or '' }}</td>
+                        <td>{{ data.numero_estable or '' }}</td>
                         <td class="justify-content-center align-items-center">
                           <button class="btn btn-sm btn-info ver-pesos" data-id="{{ r.id }}" title="Ver Pesos">
                             <i class="fas fa-balance-scale"></i>
@@ -612,7 +620,7 @@
                             <i class="fas fa-trash"></i>
                           </button>
                         </td>
-                    </tr>
+                      </tr>
                     {% endfor %}
                 </tbody>
             </table>
