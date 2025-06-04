@@ -5,7 +5,7 @@ from datetime import datetime as dt
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from models import db, User, BusinessUnit, Plant, Line, Flavor, EmpaqueExercise, DmeExercise
+from models import db, User, BusinessUnit, Plant, Line, Flavor, EmpaqueExercise, DmeExercise, PesoRegistro
 from flask_migrate import Migrate
 
 app = Flask(__name__)
@@ -1058,11 +1058,51 @@ def update_dme_defecto_cantidad(exercise_id, capture_id):
                     return jsonify(success=True)
     return jsonify(success=False, message="Defecto no encontrado"), 404
 
-@app.route('/pesos')
+@app.route('/pesos', methods=['GET', 'POST'])
 def pesos():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('pesos.html')
+    sabores = Flavor.query.all()
+    if request.method == 'POST':
+        sabor_id = request.form.get('producto_id')
+        turno = request.form.get('turno')
+        maquina = request.form.get('maquina_id')
+        peso_fijado = request.form.get('peso_fijado', type=float)
+        limite_superior = request.form.get('limite_superior', type=float)
+        control_promedio = request.form.get('control_promedio')
+        compensacion = request.form.get('compensacion', type=float)
+        intervalo_auto_cero = request.form.get('intervalo_auto_cero', type=int)
+        numero_estable = request.form.get('numero_estable', type=int)
+        usuario = session.get('username', 'desconocido')
+
+        registro = PesoRegistro(
+            sabor_id=sabor_id,
+            turno=turno,
+            maquina=maquina,
+            peso_fijado=peso_fijado,
+            limite_superior=limite_superior,
+            control_promedio=control_promedio,
+            compensacion=compensacion,
+            intervalo_auto_cero=intervalo_auto_cero,
+            numero_estable=numero_estable,
+            usuario=usuario,
+        )
+        db.session.add(registro)
+        db.session.commit()
+        flash("Registro de peso guardado correctamente", "success")
+        return redirect(url_for('pesos'))
+
+    registros = PesoRegistro.query.order_by(PesoRegistro.fecha.desc()).all()
+    return render_template('pesos.html', registros=registros, productos=sabores, maquinas=[], session=session)
+
+@app.route('/eliminar_registro_peso/<int:id>', methods=['POST'])
+def eliminar_registro_peso(id):
+    if 'user_id' not in session:
+        return jsonify(success=False)
+    registro = PesoRegistro.query.get_or_404(id)
+    db.session.delete(registro)
+    db.session.commit()
+    return jsonify(success=True)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')

@@ -58,3 +58,20 @@ class DmeExercise(db.Model):
 
     bu = db.relationship('BusinessUnit', primaryjoin='DmeExercise.bu_id == BusinessUnit.id', lazy=True)
     plant = db.relationship('Plant', primaryjoin='DmeExercise.plant_id == Plant.id', lazy=True)
+
+class PesoRegistro(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    sabor_id = db.Column(db.Integer, db.ForeignKey('flavor.id'), nullable=False)
+    maquina = db.Column(db.String(50), nullable=True)
+    turno = db.Column(db.String(10), nullable=True)
+    peso_fijado = db.Column(db.Float, nullable=True)
+    limite_superior = db.Column(db.Float, nullable=True)
+    control_promedio = db.Column(db.String(10), nullable=True)
+    compensacion = db.Column(db.Float, nullable=True)
+    intervalo_auto_cero = db.Column(db.Integer, nullable=True)
+    numero_estable = db.Column(db.Integer, nullable=True)
+    usuario = db.Column(db.String(100), nullable=True)
+    data = db.Column(db.Text, nullable=False, default='{}')  # Guardará las capturas como JSON
+
+    sabor = db.relationship('Flavor', backref='pesos', lazy=True)
