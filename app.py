@@ -1136,5 +1136,37 @@ def editar_registro_peso(id):
         numero_estable=registro.numero_estable
     )
 
+@app.route('/obtener_pesos_individuales/<int:id>', methods=['GET'])
+def obtener_pesos_individuales(id):
+    if 'user_id' not in session:
+        return jsonify(success=False, message="No autorizado"), 401
+    registro = PesoRegistro.query.get_or_404(id)
+    try:
+        data = json.loads(registro.data) if registro.data else {}
+    except Exception:
+        data = {}
+    cantidad = data.get('cantidad_pesos', 1)
+    pesos = data.get('pesos', [])
+    return jsonify(success=True, cantidad=cantidad, pesos=pesos)
+
+@app.route('/guardar_pesos_individuales/<int:id>', methods=['POST'])
+def guardar_pesos_individuales(id):
+    if 'user_id' not in session:
+        return jsonify(success=False, message="No autorizado"), 401
+    registro = PesoRegistro.query.get_or_404(id)
+    req = request.get_json()
+    cantidad = req.get('cantidad', 1)
+    pesos = req.get('pesos', [])
+    # Guardar en el campo data como JSON
+    try:
+        data = json.loads(registro.data) if registro.data else {}
+    except Exception:
+        data = {}
+    data['cantidad_pesos'] = cantidad
+    data['pesos'] = pesos
+    registro.data = json.dumps(data)
+    db.session.commit()
+    return jsonify(success=True)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')
