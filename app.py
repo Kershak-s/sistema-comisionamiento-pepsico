@@ -620,7 +620,6 @@ def new_dme_exercise():
                     'name': linea.name
                 })
             lineas_por_planta[plant.id] = lineas
-        
         # Convertir a JSON para usar en JavaScript
         plantas_json = json.dumps(plantas_por_bu)
         lineas_json = json.dumps(lineas_por_planta)
@@ -1058,10 +1057,52 @@ def update_dme_defecto_cantidad(exercise_id, capture_id):
                     return jsonify(success=True)
     return jsonify(success=False, message="Defecto no encontrado"), 404
 
-@app.route('/pesos', methods=['GET', 'POST'])
+@app.route('/pesos')
 def pesos():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    ejercicios = PesoRegistro.query.order_by(PesoRegistro.fecha.desc()).all()
+    lineas = Line.query.all()
+    plantas = Plant.query.all()
+    bus = BusinessUnit.query.all()
+    return render_template('pesos.html', ejercicios=ejercicios, query=request.args.get('q', ''), lineas=lineas, plantas=plantas, bus=bus)
+
+@app.route('/pesos/new', methods=['POST'])
+def new_peso_ejercicio():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    nombre = request.form.get('nombre')
+    linea_id = request.form.get('linea_id')
+    plant_id = request.form.get('plant_id')
+    bu_id = request.form.get('bu_id')
+
+    if not linea_id or not plant_id or not bu_id:
+        flash("Debe seleccionar BU, Planta y Línea", "danger")
+        return redirect(url_for('pesos'))
+
+    nuevo = PesoRegistro(nombre=nombre, linea_id=linea_id, fecha=datetime.now())
+    db.session.add(nuevo)
+    db.session.commit()
+    flash("Ejercicio de peso creado correctamente", "success")
+    return redirect(url_for('pesos'))
+
+@app.route('/eliminar_registro_peso/<int:id>', methods=['POST'])
+def eliminar_registro_peso(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    registro = PesoRegistro.query.get_or_404(id)
+    db.session.delete(registro)
+    db.session.commit()
+    flash("Ejercicio eliminado", "success")
+    return redirect(url_for('pesos'))
+
+@app.route('/pesos_detail', methods=['GET', 'POST'])
+def pesos_detail():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    ejercicio_id = request.args.get('id', type=int)
+    ejercicio = PesoRegistro.query.get(ejercicio_id) if ejercicio_id else None
     sabores = Flavor.query.all()
     if request.method == 'POST':
         sabor_id = request.form.get('producto_id')
@@ -1090,19 +1131,9 @@ def pesos():
         db.session.add(registro)
         db.session.commit()
         flash("Registro de peso guardado correctamente", "success")
-        return redirect(url_for('pesos'))
+        return redirect(url_for('pesos_detail'))
 
-    registros = PesoRegistro.query.order_by(PesoRegistro.fecha.desc()).all()
-    return render_template('pesos.html', registros=registros, productos=sabores, maquinas=[], session=session)
-
-@app.route('/eliminar_registro_peso/<int:id>', methods=['POST'])
-def eliminar_registro_peso(id):
-    if 'user_id' not in session:
-        return jsonify(success=False)
-    registro = PesoRegistro.query.get_or_404(id)
-    db.session.delete(registro)
-    db.session.commit()
-    return jsonify(success=True)
+    return render_template('pesos_detail.html', ejercicio=ejercicio, productos=sabores, maquinas=[], session=session)
 
 @app.route('/editar_registro_peso/<int:id>', methods=['GET', 'POST'])
 def editar_registro_peso(id):

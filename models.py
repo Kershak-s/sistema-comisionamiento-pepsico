@@ -62,7 +62,9 @@ class DmeExercise(db.Model):
 class PesoRegistro(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fecha = db.Column(db.DateTime, default=datetime.utcnow)
-    sabor_id = db.Column(db.Integer, db.ForeignKey('flavor.id'), nullable=False)
+    nombre = db.Column(db.String(150), nullable=True)
+    linea_id = db.Column(db.Integer, db.ForeignKey('line.id'), nullable=False)
+    sabor_id = db.Column(db.Integer, db.ForeignKey('flavor.id'), nullable=True)
     maquina = db.Column(db.String(50), nullable=True)
     turno = db.Column(db.String(10), nullable=True)
     peso_fijado = db.Column(db.Float, nullable=True)
@@ -74,4 +76,5 @@ class PesoRegistro(db.Model):
     usuario = db.Column(db.String(100), nullable=True)
     data = db.Column(db.Text, nullable=False, default='{}')  # Guardará las capturas como JSON
 
-    sabor = db.relationship('Flavor', backref='pesos', lazy=True)
+    sabor = db.relationship('Flavor', backref='sabor', lazy=True)
+    linea = db.relationship('Line', backref='linea', lazy=True)
