@@ -1233,5 +1233,14 @@ def guardar_pesos_individuales(id):
     db.session.commit()
     return jsonify(success=True)
 
+@app.route('/vaciar_registro_peso/<int:id>', methods=['POST'])
+def vaciar_registro_peso(id):
+    if 'user_id' not in session:
+        return jsonify(success=False, message="No autorizado"), 401
+    registro = PesoRegistro.query.get_or_404(id)
+    registro.data = '{}'
+    db.session.commit()
+    return jsonify(success=True)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')

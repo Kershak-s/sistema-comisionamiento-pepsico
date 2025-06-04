@@ -653,21 +653,19 @@ $(document).on('click', '.eliminar-registro', function () {
     if (confirm('¿Está seguro que desea eliminar este registro? Esta acción no puede deshacerse.')) {
         $row.addClass('deleting-row');
         $.ajax({
-            url: '/eliminar_registro_peso/' + id,
+            url: '/vaciar_registro_peso/' + id,
             method: 'POST',
             success: function (response) {
                 if (response.success) {
-                    $row.fadeOut(400, function () {
-                        $(this).remove();
-                    });
+                    location.reload();
                 } else {
-                    alert('Error al eliminar: ' + response.message);
+                    alert('Error al vaciar: ' + response.message);
                     $row.removeClass('deleting-row');
                 }
             },
             error: function (error) {
-                console.error('Error en la operación de eliminación', error);
-                alert('Ha ocurrido un error al intentar eliminar el registro.');
+                console.error('Error en la operación de vaciado', error);
+                alert('Ha ocurrido un error al intentar vaciar el registro.');
                 $row.removeClass('deleting-row');
             }
         });
