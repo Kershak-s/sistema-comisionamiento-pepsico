@@ -1104,5 +1104,37 @@ def eliminar_registro_peso(id):
     db.session.commit()
     return jsonify(success=True)
 
+@app.route('/editar_registro_peso/<int:id>', methods=['GET', 'POST'])
+def editar_registro_peso(id):
+    if 'user_id' not in session:
+        return jsonify(success=False, message="No autorizado")
+    registro = PesoRegistro.query.get_or_404(id)
+    if request.method == 'POST':
+        data = request.json
+        registro.turno = data.get('turno')
+        registro.sabor_id = data.get('producto_id')
+        registro.maquina = data.get('maquina_id')
+        registro.peso_fijado = data.get('peso_fijado', 0)
+        registro.limite_superior = data.get('limite_superior', 0)
+        registro.control_promedio = data.get('control_promedio')
+        registro.compensacion = data.get('compensacion', 0)
+        registro.intervalo_auto_cero = data.get('intervalo_auto_cero', 0)
+        registro.numero_estable = data.get('numero_estable', 0)
+        db.session.commit()
+        return jsonify(success=True)
+    # GET: devolver datos del registro
+    return jsonify(
+        id=registro.id,
+        turno=registro.turno,
+        producto_id=registro.sabor_id,
+        maquina_id=registro.maquina,
+        peso_fijado=registro.peso_fijado,
+        limite_superior=registro.limite_superior,
+        control_promedio=registro.control_promedio,
+        compensacion=registro.compensacion,
+        intervalo_auto_cero=registro.intervalo_auto_cero,
+        numero_estable=registro.numero_estable
+    )
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')

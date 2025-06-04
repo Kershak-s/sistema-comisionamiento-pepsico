@@ -361,6 +361,87 @@
         </div>
     </div>
 
+    <!-- Modal para editar registro de peso -->
+    <div class="modal fade" id="modalEditarRegistro" tabindex="-1" aria-labelledby="editarRegistroLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title" id="editarRegistroLabel"><i class="fas fa-edit me-2"></i>Editar Registro de Peso</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <form id="formEditarRegistro">
+            <div class="modal-body">
+              <input type="hidden" id="edit_id" name="id">
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label for="edit_turno" class="form-label">Turno</label>
+                  <select class="form-select" id="edit_turno" name="turno" required>
+                    <option value="">Seleccione turno</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="edit_producto_id" class="form-label">Producto</label>
+                  <select class="form-select" id="edit_producto_id" name="producto_id" required>
+                    {% for producto in productos %}
+                      <option value="{{ producto.id }}">{{ producto.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="edit_maquina_id" class="form-label">Máquina</label>
+                  <select class="form-select" id="edit_maquina_id" name="maquina_id" required>
+                    <option value="">Seleccione máquina</option>
+                    {% for i in range(1, 16) %}
+                      <option value="Maquina {{ i }}">Maquina {{ i }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label for="edit_peso_fijado" class="form-label">Peso Fijado</label>
+                  <input type="number" class="form-control" id="edit_peso_fijado" name="peso_fijado" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="edit_limite_superior" class="form-label">Límite Superior</label>
+                  <input type="number" class="form-control" id="edit_limite_superior" name="limite_superior" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="edit_control_promedio" class="form-label">Control Promedio</label>
+                  <select class="form-select" id="edit_control_promedio" name="control_promedio" required>
+                    <option value="">Seleccione</option>
+                    <option value="ON">ON</option>
+                    <option value="OFF">OFF</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label for="edit_compensacion" class="form-label">Compensación</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_compensacion" name="compensacion" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="edit_intervalo_auto_cero" class="form-label">Intervalo Auto Cero</label>
+                  <input type="number" class="form-control" id="edit_intervalo_auto_cero" name="intervalo_auto_cero" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="edit_numero_estable" class="form-label">Número Estable</label>
+                  <input type="number" class="form-control" id="edit_numero_estable" name="numero_estable" required>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Tabla de registros -->
     <div class="pesos-table-container">
         <div class="pesos-table-title">
@@ -479,6 +560,58 @@
         $('#listaPesosIndividuales').html('<li class="list-group-item">Funcionalidad en desarrollo</li>');
         $('#modalVerPesos').modal('show');
     });
+
+    // Abrir modal de edición y cargar datos
+    $(document).on('click', '.editar-registro', function () {
+    const id = $(this).data('id');
+    $.get('/editar_registro_peso/' + id, function (data) {
+        $('#edit_id').val(data.id);
+        $('#edit_turno').val(data.turno);
+        $('#edit_producto_id').val(data.producto_id);
+        $('#edit_maquina_id').val(data.maquina_id);
+        $('#edit_peso_fijado').val(data.peso_fijado);
+        $('#edit_limite_superior').val(data.limite_superior);
+        $('#edit_control_promedio').val(data.control_promedio);
+        $('#edit_compensacion').val(data.compensacion);
+        $('#edit_intervalo_auto_cero').val(data.intervalo_auto_cero);
+        $('#edit_numero_estable').val(data.numero_estable);
+        $('#modalEditarRegistro').modal('show');
+    });
+});
+
+// Guardar cambios del registro editado
+$('#formEditarRegistro').on('submit', function (e) {
+    e.preventDefault();
+    const id = $('#edit_id').val();
+    const payload = {
+        turno: $('#edit_turno').val(),
+        producto_id: $('#edit_producto_id').val(),
+        maquina_id: $('#edit_maquina_id').val(),
+        peso_fijado: $('#edit_peso_fijado').val(),
+        limite_superior: $('#edit_limite_superior').val(),
+        control_promedio: $('#edit_control_promedio').val(),
+        compensacion: $('#edit_compensacion').val(),
+        intervalo_auto_cero: $('#edit_intervalo_auto_cero').val(),
+        numero_estable: $('#edit_numero_estable').val()
+    };
+    $.ajax({
+        url: '/editar_registro_peso/' + id,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            if (response.success) {
+                $('#modalEditarRegistro').modal('hide');
+                location.reload();
+            } else {
+                alert('Error al guardar cambios: ' + (response.message || ''));
+            }
+        },
+        error: function () {
+            alert('Error al guardar cambios');
+        }
+    });
+});
 
 </script>
 {% endblock %}
