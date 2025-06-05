@@ -768,20 +768,11 @@ function actualizarPorcentajePesos() {
     $('#porcentaje_pesos').text(porcentaje + '%');
 }
 
-// Renderizar los inputs de pesos según la cantidad, conservando los valores digitados
+// Renderizar los inputs de pesos según la cantidad, usando SOLO los valores recibidos
 function renderInputsPesos(cantidad, valores) {
-    // Si ya hay inputs en pantalla, toma sus valores actuales
-    let actuales = [];
-    $('.peso-individual').each(function () {
-        actuales.push($(this).val());
-    });
-    // Si no hay valores previos, usa los que vienen de la función (por ejemplo, al abrir el modal)
-    if (actuales.length === 0) {
-        actuales = valores.map(v => v !== undefined ? v : '');
-    }
     let html = '<div class="row">';
     for (let i = 0; i < cantidad; i++) {
-        let valor = actuales[i] !== undefined ? actuales[i] : (valores[i] !== undefined ? valores[i] : '');
+        let valor = valores[i] !== undefined ? valores[i] : '';
         html += `
             <div class="col-6 col-md-4 mb-3">
                 <div class="card p-2 shadow-sm">
@@ -798,10 +789,26 @@ function renderInputsPesos(cantidad, valores) {
     $('.peso-individual').on('input', actualizarPorcentajePesos);
 }
 
+// Cuando cambias la cantidad manualmente, puedes seguir usando los valores actuales en pantalla
+$('#cantidad_pesos').on('input', function () {
+    const cantidad = parseInt($(this).val()) || 1;
+    // Toma los valores actuales de los inputs en pantalla
+    let actuales = [];
+    $('.peso-individual').each(function () {
+        actuales.push($(this).val());
+    });
+    renderInputsPesos(cantidad, actuales);
+});
+
 // Cambiar la cantidad de inputs al modificar el número, conservando los valores digitados
 $('#cantidad_pesos').on('input', function () {
     const cantidad = parseInt($(this).val()) || 1;
-    renderInputsPesos(cantidad, []);
+    // Toma los valores actuales de los inputs en pantalla
+    let actuales = [];
+    $('.peso-individual').each(function () {
+        actuales.push($(this).val());
+    });
+    renderInputsPesos(cantidad, actuales);
 });
 
 // Actualizar porcentaje al abrir el modal y al cambiar los valores

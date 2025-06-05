@@ -1158,6 +1158,10 @@ def pesos_detail():
         except Exception:
             data = {}
         capturas = data.get('Capturas', [])
+        # Unir todos los pesos de todas las capturas en un solo array
+        pesos_filtrados = [
+            p for captura in capturas for p in captura.get('pesos', []) if p != 0
+        ]
         # Usar la última captura para mostrar datos
         if capturas:
             captura = capturas[-1]
@@ -1170,8 +1174,6 @@ def pesos_detail():
             ejercicio.compensacion = captura.get('compensacion')
             ejercicio.intervalo_auto_cero = captura.get('intervalo_auto_cero')
             ejercicio.numero_estable = captura.get('numero_estable')
-            # Guardar la lista de pesos distintos de 0
-            pesos_filtrados = [p for p in captura.get('pesos', []) if p != 0]
             pesos_filtrados_NP = np.array(pesos_filtrados)
             promedio = sum(pesos_filtrados)/len(pesos_filtrados) if pesos_filtrados else 0
             analisis_de_capacidad = calcular_capacidad_proceso(pesos_filtrados, ejercicio.peso_fijado)
