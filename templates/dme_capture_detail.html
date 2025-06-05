@@ -330,12 +330,15 @@
                     </td>
                     <td>
                         {% if defecto.imagen %}
-                        <button class="btn btn-sm btn-primary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#imgCollapse{{ loop.index }}" aria-expanded="false" aria-controls="imgCollapse{{ loop.index }}">
+                        <button class="btn btn-sm btn-primary text-light" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#imgCollapse{{ loop.index }}" aria-expanded="false" aria-controls="imgCollapse{{ loop.index }}">
                             Ver Imagen
                         </button>
                         <div class="collapse mt-2" id="imgCollapse{{ loop.index }}">
                             <div class="defect-image">
-                                <img src="{{ defecto.imagen }}" alt="Imagen del defecto" class="img-fluid">
+                                <img src="{{ defecto.imagen }}" alt="Imagen del defecto" class="img-fluid defect-thumbnail"
+                                    style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#modalImagenAmpliada"
+                                    data-img-src="{{ defecto.imagen }}">
                             </div>
                         </div>
                         {% else %}
@@ -366,6 +369,23 @@
     </div>
     {% endif %}
 </div>
+
+<!-- Modal para ver imagen -->
+<div class="modal fade" id="modalImagenAmpliada" tabindex="-1" aria-labelledby="modalImagenAmpliadaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImagenAmpliadaLabel">Imagen del Defecto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="imagenAmpliada" src="" alt="Imagen ampliada" class="img-fluid rounded"
+                    style="max-height:70vh;">
+            </div>
+        </div>
+    </div>
+    </div>
 
 <!-- Modal para Agregar Defecto -->
 <div class="modal fade" id="addDefectModal" tabindex="-1" aria-labelledby="addDefectModalLabel" aria-hidden="true">
@@ -478,6 +498,14 @@
                 reader.readAsDataURL(this.files[0]);
             }
         };
+
+        // Mostrar imagen ampliada en modal
+        document.querySelectorAll('.defect-thumbnail').forEach(img => {
+            img.addEventListener('click', function () {
+                const src = this.getAttribute('data-img-src');
+                document.getElementById('imagenAmpliada').src = src;
+            });
+        });
 
         // Botones + y -
         document.querySelectorAll('.btn-restar-cantidad').forEach(btn => {
