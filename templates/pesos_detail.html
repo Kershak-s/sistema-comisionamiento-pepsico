@@ -225,7 +225,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-weight fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Peso medio</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Peso medio"] | round(2) }} g</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Peso medio"] | default(0) | round(2) }} g</p>
                     </div>
                 </div>
             </div>
@@ -235,7 +235,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-balance-scale-left fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Peso mínimo</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Peso minimo"]}} g</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Peso minimo"] | default(0) | round(2) }} g</p>
                     </div>
                 </div>
             </div>
@@ -245,7 +245,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-balance-scale-right fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Peso máximo</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Peso maximo"]}} g</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Peso maximo"] | default(0) | round(2) }} g</p>
                     </div>
                 </div>
             </div>
@@ -255,7 +255,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-chart-line fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Desviación estándar</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Desviacion"] | round(2) }} g</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Desviacion"] | default(0) | round(2) }} g</p>
                     </div>
                 </div>
             </div>
@@ -265,7 +265,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-exclamation-circle fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Sobrepeso</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Sobrepeso"] | round(2) }} g</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Sobrepeso"] | default(0) | round(2) }} g</p>
                     </div>
                 </div>
             </div>
@@ -275,7 +275,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-percent fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Eficiencia CCW</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Eficiencia CCW"]}} %</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Eficiencia CCW" | default(0)]}} %</p>
                     </div>
                 </div>
             </div>
@@ -285,7 +285,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-boxes fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1"># Paquetes con bajo peso</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Paquetes bajo peso"]}}</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Paquetes bajo peso"] | default(0) }}</p>
                     </div>
                 </div>
             </div>
@@ -295,7 +295,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-ruler-combined fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Cp</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Cp"] | round(2)}}</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Cp"] | default(0) | round(2)}}</p>
                     </div>
                 </div>
             </div>
@@ -305,7 +305,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-ruler fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Cpk</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Cpk"] | round(2)}}</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Cpk"] | default(0) | round(2)}}</p>
                     </div>
                 </div>
             </div>
@@ -315,7 +315,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-ruler-horizontal fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Pp</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Pp"] | round(2)}}</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Pp"] | default(0) | round(2)}}</p>
                     </div>
                 </div>
             </div>
@@ -325,7 +325,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-ruler-vertical fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Ppk</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Ppk"] | round(2) }}</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Ppk"] | default(0) | round(2) }}</p>
                     </div>
                 </div>
             </div>
@@ -335,7 +335,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-weight-hanging fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Kilos de sobrepeso</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Kilos de sobrepeso"]}} kg</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Kilos de sobrepeso"] | default(0) }} kg</p>
                     </div>
                 </div>
             </div>
@@ -345,7 +345,7 @@
                     <div class="card-body text-center p-2">
                         <i class="fas fa-chart-bar fa-lg mb-1"></i>
                         <h6 class="card-title text-white mb-1">Proyección de sobrepeso en 1 año</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Proyeccion de sobrepeso"] | round(2) }} Kg</p>
+                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Proyeccion de sobrepeso"] | default(0) | round(2) }} Kg</p>
                     </div>
                 </div>
             </div>
@@ -581,46 +581,48 @@
                 <tbody>
                     {% for r in registros %}
                       {% set data = r.data | fromjson %}
-                      <tr>
-                        <td>{{ data.maquina or '' }}</td>
-                        <td>
-                          {% set sabor_id = data.sabor_id if 'sabor_id' in data else None %}
-                          {% if sabor_id %}
-                            {% for producto in productos %}
-                              {% if producto.id == sabor_id|int %}{{ producto.name }}{% endif %}
-                            {% endfor %}
-                          {% endif %}
-                        </td>
-                        <td>{{ data.turno or '' }}</td>
-                        <td>{{ r.usuario or '' }}</td>
-                        <td>{{ data.peso_fijado or '' }}</td>
-                        <td>{{ data.limite_superior or '' }}</td>
-                        <td>
-                          {% if data.control_promedio == 'ON' %}
-                            <span class="badge bg-success">ON</span>
-                          {% elif data.control_promedio == 'OFF' %}
-                            <span class="badge bg-danger">OFF</span>
-                          {% else %}
-                            {{ data.control_promedio or '' }}
-                          {% endif %}
-                        </td>
-                        <td>{{ data.compensacion or '' }}</td>
-                        <td>{{ data.intervalo_auto_cero or '' }}</td>
-                        <td>{{ data.numero_estable or '' }}</td>
-                        <td class="justify-content-center align-items-center">
-                          <button class="btn btn-sm btn-info ver-pesos" data-id="{{ r.id }}" title="Ver Pesos">
-                            <i class="fas fa-balance-scale"></i>
-                          </button>
-                        </td>
-                        <td class="d-flex justify-content-center align-items-center">
-                          <button class="btn btn-sm btn-warning editar-registro p-0 d-flex align-items-center justify-content-center" style="width:32px;height:32px;" data-id="{{ r.id }}" title="Editar">
-                            <i class="fas fa-edit"></i>
-                          </button>
-                          <button class="btn btn-sm btn-danger eliminar-registro p-0 d-flex align-items-center justify-content-center" style="width:32px;height:32px;" data-id="{{ r.id }}" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                          </button>
-                        </td>
-                      </tr>
+                      {% for captura in data.Capturas %}
+                        <tr>
+                          <td>{{ captura.maquina or '' }}</td>
+                          <td>
+                            {% set sabor_id = captura.sabor_id if 'sabor_id' in captura else None %}
+                            {% if sabor_id %}
+                              {% for producto in productos %}
+                                {% if producto.id == sabor_id|int %}{{ producto.name }}{% endif %}
+                              {% endfor %}
+                            {% endif %}
+                          </td>
+                          <td>{{ captura.turno or '' }}</td>
+                          <td>{{ captura.usuario or r.usuario or '' }}</td>
+                          <td>{{ captura.peso_fijado or '' }}</td>
+                          <td>{{ captura.limite_superior or '' }}</td>
+                          <td>
+                            {% if captura.control_promedio == 'ON' %}
+                              <span class="badge bg-success">ON</span>
+                            {% elif captura.control_promedio == 'OFF' %}
+                              <span class="badge bg-danger">OFF</span>
+                            {% else %}
+                              {{ captura.control_promedio or '' }}
+                            {% endif %}
+                          </td>
+                          <td>{{ captura.compensacion or '' }}</td>
+                          <td>{{ captura.intervalo_auto_cero or '' }}</td>
+                          <td>{{ captura.numero_estable or '' }}</td>
+                          <td class="justify-content-center align-items-center">
+                            <button class="btn btn-sm btn-info ver-pesos" data-id="{{ r.id }}" title="Ver Pesos">
+                              <i class="fas fa-balance-scale"></i>
+                            </button>
+                          </td>
+                          <td class="d-flex justify-content-center align-items-center">
+                            <button class="btn btn-sm btn-warning editar-registro p-0 d-flex align-items-center justify-content-center" style="width:32px;height:32px;" data-id="{{ r.id }}" title="Editar">
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger eliminar-registro p-0 d-flex align-items-center justify-content-center" style="width:32px;height:32px;" data-id="{{ r.id }}" title="Eliminar">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      {% endfor %}
                     {% endfor %}
                 </tbody>
             </table>

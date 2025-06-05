@@ -1112,12 +1112,13 @@ def pesos_detail():
             data = json.loads(ejercicio.data) if ejercicio.data else {}
         except Exception:
             data = {}
-        # Considera relevante si tiene turno, sabor_id, maquina, etc.
-        if data.get('turno') or data.get('sabor_id') or data.get('maquina'):
+        # Ahora buscamos dentro de "Capturas"
+        capturas = data.get('Capturas', [])
+        if capturas:
             registros = [ejercicio]
     if request.method == 'POST' and ejercicio:
-        # Guardar todos los campos en el JSON data
-        data = {
+        # Guardar todos los campos en el JSON data bajo "Capturas"
+        nueva_captura = {
             "sabor_id": request.form.get('producto_id'),
             "turno": request.form.get('turno'),
             "maquina": request.form.get('maquina_id'),
@@ -1134,10 +1135,15 @@ def pesos_detail():
             prev_data = json.loads(ejercicio.data) if ejercicio.data else {}
         except Exception:
             prev_data = {}
-        if 'pesos' in prev_data:
-            data['pesos'] = prev_data['pesos']
-        if 'cantidad_pesos' in prev_data:
-            data['cantidad_pesos'] = prev_data['cantidad_pesos']
+        # Recuperar capturas previas
+        capturas = prev_data.get('Capturas', [])
+        # Mantener pesos/cantidad_pesos en la última captura si existen
+        if capturas and 'pesos' in capturas[-1]:
+            nueva_captura['pesos'] = capturas[-1]['pesos']
+        if capturas and 'cantidad_pesos' in capturas[-1]:
+            nueva_captura['cantidad_pesos'] = capturas[-1]['cantidad_pesos']
+        capturas.append(nueva_captura)
+        data = {'Capturas': capturas}
         ejercicio.data = json.dumps(data)
         ejercicio.usuario = session.get('username', 'desconocido')
         db.session.commit()
@@ -1145,44 +1151,45 @@ def pesos_detail():
         return redirect(url_for('pesos_detail', id=ejercicio.id))
     # Al mostrar, extraer los datos del JSON
     pesos_filtrados = []
+    datos = {}
     if ejercicio:
         try:
             data = json.loads(ejercicio.data) if ejercicio.data else {}
         except Exception:
             data = {}
-        ejercicio.turno = data.get('turno')
-        ejercicio.sabor_id = data.get('sabor_id')
-        ejercicio.maquina = data.get('maquina')
-        ejercicio.peso_fijado = data.get('peso_fijado')
-        ejercicio.limite_superior = data.get('limite_superior')
-        ejercicio.control_promedio = data.get('control_promedio')
-        ejercicio.compensacion = data.get('compensacion')
-        ejercicio.intervalo_auto_cero = data.get('intervalo_auto_cero')
-        ejercicio.numero_estable = data.get('numero_estable')
-        # Guardar la lista de pesos distintos de 0
-        pesos_filtrados = [p for p in data.get('pesos', []) if p != 0]
-        pesos_filtrados_NP = np.array(pesos_filtrados)
-
-        # Analisis de capacidad
-        promedio = sum(pesos_filtrados)/len(pesos_filtrados) if pesos_filtrados else 0
-        analisis_de_capacidad = calcular_capacidad_proceso(pesos_filtrados, ejercicio.peso_fijado)
-
-        datos = {
-            "Peso medio": promedio,
-            "Peso minimo": min(pesos_filtrados) if pesos_filtrados else 0,
-            "Peso maximo": max(pesos_filtrados) if pesos_filtrados else 0,
-            "Desviacion": np.std(pesos_filtrados_NP) if len(pesos_filtrados) > 1 else 0,
-            "Sobrepeso": ejercicio.peso_fijado - (sum(pesos_filtrados)/len(pesos_filtrados)) if pesos_filtrados else 0,
-            "Eficiencia CCW": 0,
-            "Paquetes bajo peso": sum(1 for p in pesos_filtrados if ejercicio.peso_fijado and p < ejercicio.peso_fijado),
-            "Cp": analisis_de_capacidad["Cp"],
-            "Cpk": analisis_de_capacidad["Cpk"],
-            "Pp": analisis_de_capacidad["Pp"],
-            "Ppk": analisis_de_capacidad["Ppk"],
-            # "Kilos de sobrepeso": sum(1 for p in pesos_filtrados if (p-ejercicio.peso_fijado+0.4) >=0),
-            "Kilos de sobrepeso": sum(kilos_de_sobrepeso(pesos_filtrados, ejercicio.peso_fijado)),
-            "Proyeccion de sobrepeso": (sum(kilos_de_sobrepeso(pesos_filtrados, ejercicio.peso_fijado))*3*24*12)*((480*100*0.5)/210),
-        }
+        capturas = data.get('Capturas', [])
+        # Usar la última captura para mostrar datos
+        if capturas:
+            captura = capturas[-1]
+            ejercicio.turno = captura.get('turno')
+            ejercicio.sabor_id = captura.get('sabor_id')
+            ejercicio.maquina = captura.get('maquina')
+            ejercicio.peso_fijado = captura.get('peso_fijado')
+            ejercicio.limite_superior = captura.get('limite_superior')
+            ejercicio.control_promedio = captura.get('control_promedio')
+            ejercicio.compensacion = captura.get('compensacion')
+            ejercicio.intervalo_auto_cero = captura.get('intervalo_auto_cero')
+            ejercicio.numero_estable = captura.get('numero_estable')
+            # Guardar la lista de pesos distintos de 0
+            pesos_filtrados = [p for p in captura.get('pesos', []) if p != 0]
+            pesos_filtrados_NP = np.array(pesos_filtrados)
+            promedio = sum(pesos_filtrados)/len(pesos_filtrados) if pesos_filtrados else 0
+            analisis_de_capacidad = calcular_capacidad_proceso(pesos_filtrados, ejercicio.peso_fijado)
+            datos = {
+                "Peso medio": promedio,
+                "Peso minimo": min(pesos_filtrados) if pesos_filtrados else 0,
+                "Peso maximo": max(pesos_filtrados) if pesos_filtrados else 0,
+                "Desviacion": np.std(pesos_filtrados_NP) if len(pesos_filtrados) > 1 else 0,
+                "Sobrepeso": ejercicio.peso_fijado - (sum(pesos_filtrados)/len(pesos_filtrados)) if pesos_filtrados else 0,
+                "Eficiencia CCW": 0,
+                "Paquetes bajo peso": sum(1 for p in pesos_filtrados if ejercicio.peso_fijado and p < ejercicio.peso_fijado),
+                "Cp": analisis_de_capacidad["Cp"],
+                "Cpk": analisis_de_capacidad["Cpk"],
+                "Pp": analisis_de_capacidad["Pp"],
+                "Ppk": analisis_de_capacidad["Ppk"],
+                "Kilos de sobrepeso": sum(kilos_de_sobrepeso(pesos_filtrados, ejercicio.peso_fijado)),
+                "Proyeccion de sobrepeso": (sum(kilos_de_sobrepeso(pesos_filtrados, ejercicio.peso_fijado))*3*24*12)*((480*100*0.5)/210),
+            }
     return render_template('pesos_detail.html', datos=datos, ejercicio=ejercicio, productos=sabores, maquinas=[], session=session, registros=registros, pesos_filtrados=pesos_filtrados)
 
 def kilos_de_sobrepeso(pesos, peso_fijado):
@@ -1191,15 +1198,50 @@ def kilos_de_sobrepeso(pesos, peso_fijado):
                 yield (peso - peso_fijado)/1000
 
 def calcular_capacidad_proceso(datos, peso_fijado):
+    # Si peso_fijado es None o no es un número, retorna ceros
+    if peso_fijado is None or not isinstance(peso_fijado, (int, float)):
+        return {
+            "Cp": 0,
+            "Cpk": 0,
+            "Cpi": 0,
+            "Cps": 0,
+            "Pp": 0,
+            "Ppk": 0,
+            "Ppi": 0,
+            "Pps": 0,
+        }
     def convertir_a_grupos(lista_plana, tamaño_grupo):
-        return [lista_plana[i:i+tamaño_grupo] for i in range(0, len(lista_plana), tamaño_grupo)]
+        return [lista_plana[i:i+tamaño_grupo] for i in range(0, len(lista_plana), tamaño_grupo) if len(lista_plana[i:i+tamaño_grupo]) == tamaño_grupo]
     
     ES = peso_fijado + 1
     EI = peso_fijado - 1
 
     datos = convertir_a_grupos(datos, 5)
+    if not datos:
+        return {
+            "Cp": 0,
+            "Cpk": 0,
+            "Cpi": 0,
+            "Cps": 0,
+            "Pp": 0,
+            "Ppk": 0,
+            "Ppi": 0,
+            "Pps": 0,
+        }
 
     datos = np.array(datos)
+    if datos.ndim != 2 or datos.shape[0] == 0 or datos.shape[1] == 0:
+        return {
+            "Cp": 0,
+            "Cpk": 0,
+            "Cpi": 0,
+            "Cps": 0,
+            "Pp": 0,
+            "Ppk": 0,
+            "Ppi": 0,
+            "Pps": 0,
+        }
+
     medias = np.mean(datos, axis=1)
     rangos = np.ptp(datos, axis=1)  # ptp = max - min
 
@@ -1208,21 +1250,21 @@ def calcular_capacidad_proceso(datos, peso_fijado):
 
     # Estimaciones de desviaciones
     d2 = 2.223  # constante para muestras de tamaño 5 (ajustar si es diferente)
-    sigma_corto_plazo = rango_promedio / d2
-    sigma_largo_plazo = np.std(datos.flatten(), ddof=1)
+    sigma_corto_plazo = rango_promedio / d2 if d2 != 0 else 0
+    sigma_largo_plazo = np.std(datos.flatten(), ddof=1) if datos.size > 1 else 0
 
     # Cp y Pp
-    cp = (ES - EI) / (6 * sigma_corto_plazo)
-    pp = (ES - EI) / (6 * sigma_largo_plazo)
+    cp = (ES - EI) / (6 * sigma_corto_plazo) if sigma_corto_plazo != 0 else 0
+    pp = (ES - EI) / (6 * sigma_largo_plazo) if sigma_largo_plazo != 0 else 0
 
     # Cpi, Cps, Cpk
-    cpi = (media_de_medias - EI) / (3 * sigma_corto_plazo)
-    cps = (ES - media_de_medias) / (3 * sigma_corto_plazo)
+    cpi = (media_de_medias - EI) / (3 * sigma_corto_plazo) if sigma_corto_plazo != 0 else 0
+    cps = (ES - media_de_medias) / (3 * sigma_corto_plazo) if sigma_corto_plazo != 0 else 0
     cpk = min(cpi, cps)
 
     # Ppi, Pps, Ppk
-    ppi = (media_de_medias - EI) / (3 * sigma_largo_plazo)
-    pps = (ES - media_de_medias) / (3 * sigma_largo_plazo)
+    ppi = (media_de_medias - EI) / (3 * sigma_largo_plazo) if sigma_largo_plazo != 0 else 0
+    pps = (ES - media_de_medias) / (3 * sigma_largo_plazo) if sigma_largo_plazo != 0 else 0
     ppk = min(ppi, pps)
 
     return {
