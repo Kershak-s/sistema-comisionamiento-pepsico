@@ -437,15 +437,15 @@
                         </thead>
                         <tbody>
                             <tr style="background-color: #c8e6c9; font-weight: bold; color: #1b5e20; text-align: center; font-size: 1.1rem;">
-                                <td style="background-color: #c8e6c9; color: #1b5e20;">{{ averages.eff_std_empaque|round(1) }}</td>
-                                <td style="background-color: #c8e6c9; color: #1b5e20;">{{ averages.eff_actual_empaque|round(1) }} %</td>
-                                <td style="background-color: #c8e6c9; color: #1b5e20;">{{ averages.mejora_propuesta|round(1) }}</td>
-                                <td style="background-color: #c8e6c9; color: #1b5e20;">{{ averages.eff_propuesta|round(1) }} %</td>
-                                <td style="background-color: #c8e6c9; color: #1b5e20;">{{ averages.std_pt|round(1) }}</td>
-                                <td style="background-color: #c8e6c9; color: #1b5e20;">{{ averages.actual_pt|round(1) }}</td>
-                                <td style="background-color: #c8e6c9; color: #1b5e20;">{{ averages.propuesta_pt|round(1) }}</td>
-                                <td style="background-color: #c8e6c9; color: #1b5e20;">{{ averages.global_pt|round(1) }}</td>
-                                <td style="background-color: #f8d7da; color: #842029;">{{ averages.desperdicio|round(1) }}</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-eff-std-empaque">{{ averages.eff_std_empaque|round(1) }}</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-eff-actual-empaque">{{ averages.eff_actual_empaque|round(1) }} %</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-mejora-propuesta">{{ averages.mejora_propuesta|round(1) }}</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-eff-propuesta">{{ averages.eff_propuesta|round(1) }} %</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-std-pt">{{ averages.std_pt|round(1) }}</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-actual-pt">{{ averages.actual_pt|round(1) }}</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-propuesta-pt">{{ averages.propuesta_pt|round(1) }}</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-global-pt">{{ averages.global_pt|round(1) }}</td>
+                                <td style="background-color: #c8e6c9; color: #1b5e20;" id="avg-desperdicio">{{ averages.desperdicio|round(1) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -602,11 +602,64 @@ function calcularFila(tr) {
     tr.querySelector('.global-pt').textContent = Math.round(global_pt);
 }
 
+function recalcularPromedios() {
+    const rows = document.querySelectorAll('tbody tr');
+    let n = 0;
+    let sumEffStdEmpaque = 0, sumEffActualEmpaque = 0, sumMejoraPropuesta = 0, sumEffPropuesta = 0;
+    let sumStdPt = 0, sumActualPt = 0, sumPropuestaPt = 0, sumGlobalPt = 0, sumDesperdicio = 0;
+
+    rows.forEach(tr => {
+        if (!tr.querySelector('.mejora-propuesta-input')) return; // solo filas válidas
+
+        const peso_gr = parseFloat(tr.querySelector('.peso-gr').textContent) || 0;
+        const bpm_actual = parseFloat(tr.querySelector('.bpm-actual').textContent) || 0;
+        const tiempo = parseFloat(tr.querySelector('.tiempo').textContent) || 0;
+        const total_pq = parseFloat(tr.children[6].textContent) || 0;
+        const total_pq_buenos = parseFloat(tr.querySelector('.total-pq-buenos').textContent) || 0;
+        const bpm_propuesta = parseFloat(tr.querySelector('.bpm-propuesta').textContent) || 0;
+        const bpm_global = parseFloat(tr.querySelector('.bpm-global').textContent) || 0;
+        const eff_std_empaque = parseFloat(tr.querySelector('.eff-std-empaque').textContent) || 0;
+        const mejora_propuesta = parseFloat(tr.querySelector('.mejora-propuesta-input').value) || 0;
+
+        // Cálculos
+        const eff_actual_empaque = bpm_actual && tiempo ? ((total_pq_buenos/(bpm_actual*60*tiempo))*100) : 0;
+        const eff_propuesta = eff_actual_empaque + mejora_propuesta;
+        const std_pt = (((peso_gr/1000)*bpm_actual*60)*eff_std_empaque)/100;
+        const actual_pt = (((peso_gr/1000)*bpm_actual*60)*eff_actual_empaque)/100;
+        const propuesta_pt = (((peso_gr/1000)*bpm_propuesta*60)*eff_propuesta)/100;
+        const global_pt = (((peso_gr/1000)*bpm_global*60)*eff_std_empaque)/100;
+        const desperdicio = total_pq - total_pq_buenos;
+
+        sumEffStdEmpaque += eff_std_empaque;
+        sumEffActualEmpaque += eff_actual_empaque;
+        sumMejoraPropuesta += mejora_propuesta;
+        sumEffPropuesta += eff_propuesta;
+        sumStdPt += std_pt;
+        sumActualPt += actual_pt;
+        sumPropuestaPt += propuesta_pt;
+        sumGlobalPt += global_pt;
+        sumDesperdicio += desperdicio;
+        n++;
+    });
+
+    // Actualizar resumen
+    document.getElementById('avg-eff-std-empaque').textContent = n ? (sumEffStdEmpaque/n).toFixed(1) : '0';
+    document.getElementById('avg-eff-actual-empaque').textContent = n ? (sumEffActualEmpaque/n).toFixed(1) + ' %' : '0 %';
+    document.getElementById('avg-mejora-propuesta').textContent = n ? (sumMejoraPropuesta/n).toFixed(1) : '0';
+    document.getElementById('avg-eff-propuesta').textContent = n ? (sumEffPropuesta/n).toFixed(1) + ' %' : '0 %';
+    document.getElementById('avg-std-pt').textContent = n ? (sumStdPt/n).toFixed(1) : '0';
+    document.getElementById('avg-actual-pt').textContent = n ? (sumActualPt/n).toFixed(1) : '0';
+    document.getElementById('avg-propuesta-pt').textContent = n ? (sumPropuestaPt/n).toFixed(1) : '0';
+    document.getElementById('avg-global-pt').textContent = n ? (sumGlobalPt/n).toFixed(1) : '0';
+    document.getElementById('avg-desperdicio').textContent = n ? (sumDesperdicio/n).toFixed(1) : '0';
+}
+
+// Llama a recalcularPromedios cuando cambie una mejora_propuesta
 document.querySelectorAll('.mejora-propuesta-input').forEach(input => {
     input.addEventListener('input', function() {
         const tr = this.closest('tr');
         calcularFila(tr);
-
+        recalcularPromedios();
         // Mantener la actualización en backend si lo necesitas
         const index = this.dataset.captureIndex;
         const value = this.value;
@@ -631,13 +684,6 @@ document.querySelectorAll('.mejora-propuesta-input').forEach(input => {
     });
 });
 
-// Inicializar cálculos al cargar
-document.querySelectorAll('tbody tr').forEach(tr => {
-    if (tr.querySelector('.mejora-propuesta-input')) {
-        calcularFila(tr);
-    }
-});
-
 // Eliminar captura
 function deleteCapture(index) {
     if (!confirm('¿Seguro que deseas eliminar esta captura?')) return;
@@ -652,13 +698,24 @@ function deleteCapture(index) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            location.reload();
+            // Elimina la fila del DOM y recalcula promedios
+            const rows = document.querySelectorAll('tbody tr');
+            if (rows[index]) rows[index].remove();
+            recalcularPromedios();
         } else {
             alert('Error al eliminar: ' + (data.message || ''));
         }
     })
     .catch(() => alert('Error de red al eliminar'));
 }
+
+// Inicializar cálculos al cargar
+document.querySelectorAll('tbody tr').forEach(tr => {
+    if (tr.querySelector('.mejora-propuesta-input')) {
+        calcularFila(tr);
+    }
+});
+recalcularPromedios();
 
 // Inicializar DataTable con scroll horizontal
 $(document).ready(function() {

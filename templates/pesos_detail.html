@@ -12,189 +12,453 @@
         font-weight: 500;
         font-size: 0.9rem;
         margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .back-link:hover {
+        color: var(--pepsico-light-blue);
+        transform: translateX(-5px);
     }
     
     .back-link i {
         margin-right: 0.25rem;
     }
 
-    .card{
-        background-color: var(--pepsico-blue);
+    /* Enhanced Header - Compact */
+    .page-header {
+        background: linear-gradient(135deg, var(--pepsico-blue) 0%, var(--pepsico-light-blue) 100%);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 25px rgba(0, 87, 168, 0.15);
     }
 
+    .page-header h2 {
+        color: white;
+        margin: 0;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .page-header .btn {
+        box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        border: none;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .page-header .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255,255,255,0.3);
+    }
+
+    /* Enhanced Cards - Compact Version */
+    .stats-grid {
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 1rem;
+        height: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 15px rgba(0, 87, 168, 0.08);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--pepsico-blue), var(--pepsico-light-blue));
+        border-radius: 12px 12px 0 0;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(0, 87, 168, 0.15);
+    }
+
+    .stat-card .card-icon {
+        background: linear-gradient(135deg, var(--pepsico-blue), var(--pepsico-light-blue));
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.7rem;
+        font-size: 1rem;
+        box-shadow: 0 3px 10px rgba(0, 87, 168, 0.2);
+    }
+
+    .stat-card .card-title {
+        color: #495057;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        line-height: 1.1;
+    }
+
+    .stat-card .card-value {
+        color: var(--pepsico-blue);
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .stat-card .card-unit {
+        color: #6c757d;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-left: 0.2rem;
+    }
+
+    /* Button Enhancements */
     .btn-primary,
     .btn.btn-primary {
-        background-color: var(--pepsico-blue) !important;
-        border-color: var(--pepsico-blue) !important;
+        background: linear-gradient(135deg, var(--pepsico-blue) 0%, var(--pepsico-light-blue) 100%) !important;
+        border: none !important;
         color: #fff !important;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 87, 168, 0.2);
     }
     .btn-primary:hover,
     .btn.btn-primary:hover {
-        background-color: var(--pepsico-light-blue) !important;
-        border-color: var(--pepsico-light-blue) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 87, 168, 0.3);
     }
 
     .btn-warning,
     .btn.btn-warning {
-        background-color: var(--frito-lay-yellow) !important;
-        border-color: var(--frito-lay-yellow) !important;
+        background: linear-gradient(135deg, var(--frito-lay-yellow) 0%, #f8d12f 100%) !important;
+        border: none !important;
         color: #333 !important;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
     }
     .btn-warning:hover,
     .btn.btn-warning:hover {
-        background-color: #e6bb00 !important;
-        border-color: #e6bb00 !important;
-        color: #222 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
     }
 
     .btn-info,
     .btn.btn-info {
-        background-color: var(--pepsico-blue) !important;
-        border-color: var(--pepsico-blue) !important;
+        background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%) !important;
+        border: none !important;
         color: #fff !important;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(23, 162, 184, 0.2);
     }
     .btn-info:hover,
     .btn.btn-info:hover {
-        background-color: var(--pepsico-light-blue) !important;
-        border-color: var(--pepsico-light-blue) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
     }
 
     .btn-danger,
     .btn.btn-danger {
-        background-color: var(--pepsico-red) !important;
-        border-color: var(--pepsico-red) !important;
+        background: linear-gradient(135deg, var(--pepsico-red) 0%, #dc3545 100%) !important;
+        border: none !important;
         color: #fff !important;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
     }
     .btn-danger:hover,
     .btn.btn-danger:hover {
-        background-color: #b80029 !important;
-        border-color: #b80029 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
     }
 
+    /* Enhanced Table Container - Compact */
     .pesos-table-container {
-        background-color: white;
-        border-radius: 12px;
-        padding: 2rem 1.5rem 1.5rem 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 12px rgba(0, 87, 168, 0.08);
-    }
-    .pesos-table-title {
-        padding: 1rem 1.5rem;
-        margin: 0;
-        background-color:  var(--pepsico-blue);
-        color: white;
-        font-weight: 600;
-        font-size: 1.1rem;
-        border-radius: 10px 10px 0 0;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    }
-    .pesos-table-responsive {
-        border-radius: 10px;
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+        border-radius: 20px;
+        padding: 0;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 30px rgba(0, 87, 168, 0.1);
+        border: 1px solid rgba(0, 87, 168, 0.1);
         overflow: hidden;
     }
-    .pesos-table thead th {
-        font-weight: 600;
-        vertical-align: middle;
-        background-color: var(--pepsico-blue);
-        color: #fff;
-        text-align: center;
-        padding: 0.75rem 0.5rem;
-        font-size: 0.95rem;
-        height: 50px;
-        border-bottom: 2px solid #dee2e6;
-    }
-    .pesos-table tbody td {
-        vertical-align: middle;
-        padding: 0.5rem;
-        height: 48px;
-        background-color: #fff;
-        text-align: center;
-        font-size: 0.97rem;
-    }
-    .pesos-table tbody tr:hover {
-        background-color: #f5faff;
-    }
-    .pesos-table .badge {
-        font-size: 0.95em;
-        padding: 0.5em 0.8em;
-        border-radius: 6px;
-        font-weight: 500;
-    }
-    .pesos-table .btn {
-        border-radius: 6px;
-        font-size: 0.95em;
-        margin: 0 2px;
-        transition: all 0.2s;
-    }
-    .pesos-table .btn-info {
-        color: #fff;
-        border: none;
-    }
-    .pesos-table .btn-warning {
-        color: #333;
-        border: none;
-    }
-    .pesos-table .btn-danger {
-        color: #fff;
-        border: none;
-    }
-    .pesos-table .btn-success {
-        color: #fff;
-        border: none;
-    }
-    .pesos-table .btn:hover {
-        filter: brightness(0.95);
-        box-shadow: 0 2px 8px rgba(0,87,168,0.08);
-        transform: translateY(-1px);
-    }
-    @media (max-width: 991px) {
-        .pesos-table-container {
-            padding: 1rem 0.5rem;
-        }
-        .pesos-table-title {
-            padding: 0.7rem 1rem;
-            font-size: 1rem;
-        }
+
+    .pesos-table-title {
+        padding: 1.5rem 2rem;
+        margin: 0;
+        background: linear-gradient(135deg, var(--pepsico-blue) 0%, var(--pepsico-light-blue) 100%);
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        border-bottom: 3px solid rgba(255,255,255,0.1);
     }
 
-    /* Modales con cabecera personalizada */
+    .pesos-table-responsive {
+        border-radius: 0;
+        overflow-x: unset !important;
+        max-height: unset !important;
+        max-height: 70vh;
+    }
+
+    .pesos-table {
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .pesos-table thead th {
+        font-weight: 700;
+        vertical-align: middle;
+        background: linear-gradient(135deg, var(--pepsico-blue) 0%, var(--pepsico-light-blue) 100%);
+        color: #fff;
+        text-align: center;
+        padding: 1rem 0.75rem;
+        font-size: 0.9rem;
+        height: auto;
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .pesos-table tbody td {
+        vertical-align: middle;
+        padding: 1rem 0.75rem;
+        background-color: #fff;
+        text-align: center;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .pesos-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .pesos-table tbody tr:hover {
+        background: linear-gradient(90deg, #f8f9fa 0%, #e3f2fd 50%, #f8f9fa 100%);
+        transform: scale(1.01);
+        box-shadow: 0 4px 15px rgba(0, 87, 168, 0.1);
+    }
+
+    .pesos-table .badge {
+        font-size: 0.85em;
+        padding: 0.5em 1em;
+        border-radius: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .pesos-table .btn {
+        border-radius: 8px;
+        font-size: 0.85em;
+        margin: 0 2px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pesos-table .btn:hover {
+        transform: translateY(-2px) scale(1.1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Modal Enhancements */
+    .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+
     .modal-header.bg-primary,
     .modal-header.bg-info,
     .modal-header.bg-warning {
-        border-top-left-radius: 0.5rem;
-        border-top-right-radius: 0.5rem;
-        border-bottom: none;
+        border: none;
+        padding: 1.5rem 2rem;
     }
+
     .modal-header.bg-primary {
-        background-color: var(--pepsico-blue) !important;
+        background: linear-gradient(135deg, var(--pepsico-blue), var(--pepsico-light-blue)) !important;
         color: #fff !important;
     }
+
     .modal-header.bg-info {
-        background-color: var(--pepsico-light-blue) !important;
+        background: linear-gradient(135deg, #17a2b8, #20c997) !important;
         color: #fff !important;
     }
+
     .modal-header.bg-warning {
-        background-color: var(--frito-lay-yellow) !important;
+        background: linear-gradient(135deg, var(--frito-lay-yellow), #f8d12f) !important;
         color: #333 !important;
     }
 
-    /* Mejorar el aspecto de los badges */
+    .modal-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+    }
+
+    .modal-body {
+        padding: 2rem;
+        background: #f8f9fa;
+    }
+
+    .modal-footer {
+        padding: 1.5rem 2rem;
+        background: #f8f9fa;
+        border: none;
+    }
+
+    /* Form Enhancements */
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control,
+    .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--pepsico-blue);
+        box-shadow: 0 0 0 0.2rem rgba(0, 87, 168, 0.15);
+        background: #fff;
+    }
+
+    /* Badge Improvements */
     .badge.bg-primary {
-        background-color: var(--pepsico-blue) !important;
+        background: linear-gradient(135deg, var(--pepsico-blue), var(--pepsico-light-blue)) !important;
     }
     .badge.bg-success {
-        background-color: #28a745 !important;
+        background: linear-gradient(135deg, #28a745, #20c997) !important;
     }
     .badge.bg-danger {
-        background-color: var(--pepsico-red) !important;
+        background: linear-gradient(135deg, var(--pepsico-red), #dc3545) !important;
     }
 
     /* Inputs en los modales */
     #inputsPesos .card {
-        background: #f8f9fa;
-        border-radius: 8px;
-        border: 1px solid #e3e6ea;
-        box-shadow: 0 2px 8px rgba(0,87,168,0.05);
+        background: #fff;
+        border-radius: 12px;
+        border: 2px solid #e9ecef;
+        box-shadow: 0 4px 15px rgba(0,87,168,0.08);
+        transition: all 0.3s ease;
+    }
+
+    #inputsPesos .card:hover {
+        border-color: var(--pepsico-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,87,168,0.15);
+    }
+
+    /* Progress Badge for Pesos */
+    #porcentaje_pesos {
+        font-size: 1.1em !important;
+        padding: 0.6em 1.2em;
+        border-radius: 25px;
+        background: linear-gradient(135deg, var(--pepsico-blue), var(--pepsico-light-blue)) !important;
+        box-shadow: 0 3px 10px rgba(0, 87, 168, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 991px) {
+        .pesos-table-container {
+            margin: 1rem 0;
+        }
+        .pesos-table-title {
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+        }
+        .page-header {
+            padding: 1.5rem;
+        }
+        .stat-card {
+            margin-bottom: 0.8rem;
+        }
+        .stats-grid {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            text-align: center;
+        }
+        .page-header .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .stats-grid .col-6 {
+            margin-bottom: 0.5rem;
+        }
+        .stat-card {
+            padding: 0.8rem;
+        }
+        .stat-card .card-icon {
+            width: 30px;
+            height: 30px;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .card-title {
+            font-size: 0.7rem;
+        }
+        .stat-card .card-value {
+            font-size: 1.2rem;
+        }
+    }
+
+    /* Animation for loading states */
+    .deleting-row {
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Utility classes */
+    .text-gradient {
+        background: linear-gradient(135deg, var(--pepsico-blue), var(--pepsico-light-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 </style>
 {% endblock %}
@@ -205,148 +469,186 @@
 </a>
 
 <main class="container-fluid py-4">
-    <!-- Titulo y Boton de nueva captura -->
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <h2 class="mb-0"><i class="fas fa-weight-hanging option-icon text-black"></i> Carga de Pesos</h2>
-            <button type="button" id="btnNuevaCaptura" class="btn btn-primary" data-bs-toggle="modal"
+    <!-- Enhanced Header -->
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <i class="fas fa-weight-hanging me-3"></i>
+                Control de Pesos
+            </h2>
+            <button type="button" id="btnNuevaCaptura" class="btn btn-light" data-bs-toggle="modal"
                 data-bs-target="#modalNuevaCaptura">
                 <i class="fas fa-plus me-2"></i>Nueva Captura
             </button>
         </div>
-    </div> 
+    </div>
 
-    <!-- Datos Pesadora -->
-    <div class="container mt-4">
-        <div class="row">
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-weight fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Peso medio</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Peso medio"] | default(0) | round(2) }} g</p>
+    <!-- Enhanced Statistics Grid - Compact -->
+    <div class="stats-grid">
+        <div class="row g-3">
+            <!-- Peso medio -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-weight"></i>
                     </div>
+                    <h6 class="card-title">Peso medio</h6>
+                    <p class="card-value">
+                        {{ datos["Peso medio"] | default(0) | round(2) }}
+                        <span class="card-unit">g</span>
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-balance-scale-left fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Peso mínimo</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Peso minimo"] | default(0) | round(2) }} g</p>
+            <!-- Peso mínimo -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-balance-scale-left"></i>
                     </div>
+                    <h6 class="card-title">Peso mínimo</h6>
+                    <p class="card-value">
+                        {{ datos["Peso minimo"] | default(0) | round(2) }}
+                        <span class="card-unit">g</span>
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-balance-scale-right fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Peso máximo</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Peso maximo"] | default(0) | round(2) }} g</p>
+            <!-- Peso máximo -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-balance-scale-right"></i>
                     </div>
+                    <h6 class="card-title">Peso máximo</h6>
+                    <p class="card-value">
+                        {{ datos["Peso maximo"] | default(0) | round(2) }}
+                        <span class="card-unit">g</span>
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-chart-line fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Desviación estándar</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{ datos["Desviacion"] | default(0) | round(2) }} g</p>
+            <!-- Desviación estándar -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
                     </div>
+                    <h6 class="card-title">Desviación estándar</h6>
+                    <p class="card-value">
+                        {{ datos["Desviacion"] | default(0) | round(2) }}
+                        <span class="card-unit">g</span>
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-exclamation-circle fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Sobrepeso</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Sobrepeso"] | default(0) | round(2) }} g</p>
+            <!-- Sobrepeso -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
                     </div>
+                    <h6 class="card-title">Sobrepeso</h6>
+                    <p class="card-value">
+                        {{datos["Sobrepeso"] | default(0) | round(2) }}
+                        <span class="card-unit">g</span>
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-percent fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Eficiencia CCW</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Eficiencia CCW" | default(0)]}} %</p>
+            <!-- Eficiencia CCW -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-percentage"></i>
                     </div>
+                    <h6 class="card-title">Eficiencia CCW</h6>
+                    <p class="card-value">
+                        {{datos["Eficiencia CCW" | default(0)]}}
+                        <span class="card-unit">%</span>
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-boxes fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1"># Paquetes con bajo peso</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Paquetes bajo peso"] | default(0) }}</p>
+            <!-- Paquetes bajo peso -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-boxes"></i>
                     </div>
+                    <h6 class="card-title">Paquetes bajo peso</h6>
+                    <p class="card-value">
+                        {{datos["Paquetes bajo peso"] | default(0) }}
+                        <span class="card-unit">uds</span>
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-ruler-combined fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Cp</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Cp"] | default(0) | round(2)}}</p>
+            <!-- Cp -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-ruler-combined"></i>
                     </div>
+                    <h6 class="card-title">Cp</h6>
+                    <p class="card-value">
+                        {{datos["Cp"] | default(0) | round(2)}}
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-ruler fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Cpk</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Cpk"] | default(0) | round(2)}}</p>
+            <!-- Cpk -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-ruler"></i>
                     </div>
+                    <h6 class="card-title">Cpk</h6>
+                    <p class="card-value">
+                        {{datos["Cpk"] | default(0) | round(2)}}
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-ruler-horizontal fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Pp</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Pp"] | default(0) | round(2)}}</p>
+            <!-- Pp -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-ruler-horizontal"></i>
                     </div>
+                    <h6 class="card-title">Pp</h6>
+                    <p class="card-value">
+                        {{datos["Pp"] | default(0) | round(2)}}
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-ruler-vertical fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Ppk</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Ppk"] | default(0) | round(2) }}</p>
+            <!-- Ppk -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-ruler-vertical"></i>
                     </div>
+                    <h6 class="card-title">Ppk</h6>
+                    <p class="card-value">
+                        {{datos["Ppk"] | default(0) | round(2) }}
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-weight-hanging fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Kilos de sobrepeso</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Kilos de sobrepeso"] | default(0) }} kg</p>
+            <!-- Kilos de sobrepeso -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-weight-hanging"></i>
                     </div>
+                    <h6 class="card-title">Kilos de sobrepeso</h6>
+                    <p class="card-value">
+                        {{datos["Kilos de sobrepeso"] | default(0) }}
+                        <span class="card-unit">kg</span>
+                    </p>
                 </div>
             </div>
-            <!-- Card -->
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                <div class="card shadow-sm border-0 text-white p-2" id="cardPesadora">
-                    <div class="card-body text-center p-2">
-                        <i class="fas fa-chart-bar fa-lg mb-1"></i>
-                        <h6 class="card-title text-white mb-1">Proyección de sobrepeso en 1 año</h6>
-                        <p class="card-text fs-6 fw-bold mb-0">{{datos["Proyeccion de sobrepeso"] | default(0) | round(2) }} Kg</p>
+            <!-- Proyección de sobrepeso -->
+            <div class="col-6 col-lg-3 col-xl-2">
+                <div class="card stat-card">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-bar"></i>
                     </div>
+                    <h6 class="card-title">Proyección anual</h6>
+                    <p class="card-value">
+                        {{datos["Proyeccion de sobrepeso"] | default(0) | round(2) }}
+                        <span class="card-unit">Kg</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -540,10 +842,12 @@
             <div class="modal-body">
               <input type="hidden" id="pesos_registro_id" name="registro_id">
               <input type="hidden" id="pesos_captura_idx" name="captura_idx">
-              <div class="mb-3 d-flex align-items-center">
-                <label for="cantidad_pesos" class="form-label mb-0 me-2">Cantidad de Pesos</label>
-                <input type="number" min="1" class="form-control me-2" style="max-width:120px;" id="cantidad_pesos" name="cantidad_pesos" required>
-                <span id="porcentaje_pesos" class="badge bg-primary" style="font-size:1em;">0%</span>
+              <div class="mb-4 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                  <label for="cantidad_pesos" class="form-label mb-0 me-3">Cantidad de Pesos</label>
+                  <input type="number" min="1" class="form-control me-3" style="max-width:120px;" id="cantidad_pesos" name="cantidad_pesos" required>
+                </div>
+                <span id="porcentaje_pesos" class="badge bg-primary">0%</span>
               </div>
               <div id="inputsPesos"></div>
             </div>
@@ -556,13 +860,13 @@
       </div>
     </div>
 
-    <!-- Tabla de registros -->
+    <!-- Enhanced Table -->
     <div class="pesos-table-container">
         <div class="pesos-table-title">
-            <i class="fas fa-database me-2"></i> Registros Pesos
+            <i class="fas fa-database me-2"></i> Registros de Pesos
         </div>
         <div class="pesos-table-responsive">
-            <table class="table table-bordered table-hover pesos-table" id="pesosDatatable">
+            <table class="table table-hover pesos-table" id="pesosDatatable">
                 <thead>
                     <tr>
                         <th>Máquina</th>
@@ -584,7 +888,7 @@
                       {% set data = r.data | fromjson %}
                       {% for captura in data.Capturas %}
                         <tr>
-                          <td>{{ captura.maquina or '' }}</td>
+                          <td><strong>{{ captura.maquina or '' }}</strong></td>
                           <td>
                             {% set sabor_id = captura.sabor_id if 'sabor_id' in captura else None %}
                             {% if sabor_id %}
@@ -593,9 +897,9 @@
                               {% endfor %}
                             {% endif %}
                           </td>
-                          <td>{{ captura.turno or '' }}</td>
+                          <td><span class="badge bg-primary">{{ captura.turno or '' }}</span></td>
                           <td>{{ captura.usuario or r.usuario or '' }}</td>
-                          <td>{{ captura.peso_fijado or '' }}</td>
+                          <td><strong>{{ captura.peso_fijado or '' }}</strong></td>
                           <td>{{ captura.limite_superior or '' }}</td>
                           <td>
                             {% if captura.control_promedio == 'ON' %}
@@ -609,26 +913,26 @@
                           <td>{{ captura.compensacion or '' }}</td>
                           <td>{{ captura.intervalo_auto_cero or '' }}</td>
                           <td>{{ captura.numero_estable or '' }}</td>
-                          <td class="justify-content-center align-items-center">
+                          <td>
                             <button class="btn btn-sm btn-info ver-pesos" data-id="{{ r.id }}" data-captura-idx="{{ loop.index0 }}" title="Ver Pesos">
                                 <i class="fas fa-balance-scale"></i>
                             </button>
                           </td>
-                          <td class="d-flex justify-content-center align-items-center">
-                            <button class="btn btn-sm btn-warning editar-registro p-0 d-flex align-items-center justify-content-center"
-                              style="width:32px;height:32px;"
-                              data-id="{{ r.id }}"
-                              data-captura-idx="{{ loop.index0 }}"
-                              title="Editar">
-                              <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger eliminar-captura p-0 d-flex align-items-center justify-content-center"
-        style="width:32px;height:32px;"
-        data-id="{{ r.id }}"
-        data-captura-idx="{{ loop.index0 }}"
-        title="Eliminar">
-  <i class="fas fa-trash"></i>
-</button>
+                          <td>
+                            <div class="d-flex justify-content-center gap-1">
+                              <button class="btn btn-sm btn-warning editar-registro"
+                                data-id="{{ r.id }}"
+                                data-captura-idx="{{ loop.index0 }}"
+                                title="Editar">
+                                <i class="fas fa-edit"></i>
+                              </button>
+                              <button class="btn btn-sm btn-danger eliminar-captura"
+                                data-id="{{ r.id }}"
+                                data-captura-idx="{{ loop.index0 }}"
+                                title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       {% endfor %}
@@ -770,13 +1074,13 @@ function actualizarPorcentajePesos() {
 
 // Renderizar los inputs de pesos según la cantidad, usando SOLO los valores recibidos
 function renderInputsPesos(cantidad, valores) {
-    let html = '<div class="row">';
+    let html = '<div class="row g-3">';
     for (let i = 0; i < cantidad; i++) {
         let valor = valores[i] !== undefined ? valores[i] : '';
         html += `
-            <div class="col-6 col-md-4 mb-3">
-                <div class="card p-2 shadow-sm">
-                    <label class="form-label">Peso ${i + 1}:</label>
+            <div class="col-6 col-md-4">
+                <div class="card p-3 shadow-sm">
+                    <label class="form-label mb-2">Peso ${i + 1}:</label>
                     <input type="number" step="0.01" class="form-control peso-individual" name="peso_${i}" value="${valor}">
                 </div>
             </div>

@@ -6,6 +6,20 @@
 
 {% block extra_styles %}
 <style>
+    .back-link {
+        color: var(--pepsico-blue);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .back-link i {
+        margin-right: 0.25rem;
+    }
+
     .search-container {
         margin-bottom: 1.5rem;
     }
@@ -87,6 +101,10 @@
 {% endblock %}
 
 {% block content %}
+<a href="{{ url_for('comicionamiento') }}" class="back-link">
+    <i class="fas fa-arrow-left"></i> Volver a Comicionamiento
+</a>
+<hr>
 <div class="row mb-4">
     <div class="col-lg-8 col-md-6">
         <form action="{{ url_for('dme_exercises') }}" method="GET" class="search-container d-flex">
