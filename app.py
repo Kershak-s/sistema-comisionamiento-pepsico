@@ -1336,13 +1336,20 @@ def editar_registro_peso(id):
 def obtener_pesos_individuales(id):
     if 'user_id' not in session:
         return jsonify(success=False, message="No autorizado"), 401
+    captura_idx = int(request.args.get('captura_idx', 0))
     registro = PesoRegistro.query.get_or_404(id)
     try:
         data = json.loads(registro.data) if registro.data else {}
     except Exception:
         data = {}
-    cantidad = data.get('cantidad_pesos', 1)
-    pesos = data.get('pesos', [])
+    capturas = data.get('Capturas', [])
+    if 0 <= captura_idx < len(capturas):
+        captura = capturas[captura_idx]
+        cantidad = captura.get('cantidad_pesos', 1)
+        pesos = captura.get('pesos', [])
+    else:
+        cantidad = 1
+        pesos = []
     return jsonify(success=True, cantidad=cantidad, pesos=pesos)
 
 @app.route('/guardar_pesos_individuales/<int:id>', methods=['POST'])
@@ -1351,18 +1358,23 @@ def guardar_pesos_individuales(id):
         return jsonify(success=False, message="No autorizado"), 401
     registro = PesoRegistro.query.get_or_404(id)
     req = request.get_json()
+    captura_idx = int(req.get('captura_idx', 0))
     cantidad = req.get('cantidad', 1)
     pesos = req.get('pesos', [])
-    # Guardar en el campo data como JSON
     try:
         data = json.loads(registro.data) if registro.data else {}
     except Exception:
         data = {}
-    data['cantidad_pesos'] = cantidad
-    data['pesos'] = pesos
-    registro.data = json.dumps(data)
-    db.session.commit()
-    return jsonify(success=True)
+    capturas = data.get('Capturas', [])
+    if 0 <= captura_idx < len(capturas):
+        capturas[captura_idx]['cantidad_pesos'] = cantidad
+        capturas[captura_idx]['pesos'] = pesos
+        data['Capturas'] = capturas
+        registro.data = json.dumps(data)
+        db.session.commit()
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False, message="Índice de captura inválido"), 400
 
 @app.route('/vaciar_registro_peso/<int:id>', methods=['POST'])
 def vaciar_registro_peso(id):

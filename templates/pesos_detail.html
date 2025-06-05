@@ -539,6 +539,7 @@
             </div>
             <div class="modal-body">
               <input type="hidden" id="pesos_registro_id" name="registro_id">
+              <input type="hidden" id="pesos_captura_idx" name="captura_idx">
               <div class="mb-3 d-flex align-items-center">
                 <label for="cantidad_pesos" class="form-label mb-0 me-2">Cantidad de Pesos</label>
                 <input type="number" min="1" class="form-control me-2" style="max-width:120px;" id="cantidad_pesos" name="cantidad_pesos" required>
@@ -609,8 +610,8 @@
                           <td>{{ captura.intervalo_auto_cero or '' }}</td>
                           <td>{{ captura.numero_estable or '' }}</td>
                           <td class="justify-content-center align-items-center">
-                            <button class="btn btn-sm btn-info ver-pesos" data-id="{{ r.id }}" title="Ver Pesos">
-                              <i class="fas fa-balance-scale"></i>
+                            <button class="btn btn-sm btn-info ver-pesos" data-id="{{ r.id }}" data-captura-idx="{{ loop.index0 }}" title="Ver Pesos">
+                                <i class="fas fa-balance-scale"></i>
                             </button>
                           </td>
                           <td class="d-flex justify-content-center align-items-center">
@@ -743,9 +744,11 @@ $('#formEditarRegistro').on('submit', function (e) {
 // Abrir modal de pesos individuales y cargar datos
 $(document).on('click', '.ver-pesos', function () {
     const id = $(this).data('id');
+    const captura_idx = $(this).data('captura-idx');
     $('#pesos_registro_id').val(id);
+    $('#pesos_captura_idx').val(captura_idx); // Nuevo input oculto
     // Obtener los datos actuales
-    $.get('/obtener_pesos_individuales/' + id, function (data) {
+    $.get('/obtener_pesos_individuales/' + id + '?captura_idx=' + captura_idx, function (data) {
         $('#cantidad_pesos').val(data.cantidad || 1);
         renderInputsPesos(data.cantidad || 1, data.pesos || []);
         $('#modalVerPesos').modal('show');
@@ -811,6 +814,7 @@ $(document).on('shown.bs.modal', '#modalVerPesos', function () {
 $('#formPesosIndividuales').on('submit', function (e) {
     e.preventDefault();
     const id = $('#pesos_registro_id').val();
+    const captura_idx = $('#pesos_captura_idx').val();
     const cantidad = parseInt($('#cantidad_pesos').val()) || 1;
     let pesos = [];
     $('.peso-individual').each(function () {
@@ -820,7 +824,7 @@ $('#formPesosIndividuales').on('submit', function (e) {
         url: '/guardar_pesos_individuales/' + id,
         method: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ cantidad: cantidad, pesos: pesos }),
+        data: JSON.stringify({ cantidad: cantidad, pesos: pesos, captura_idx: captura_idx }),
         success: function (resp) {
             if (resp.success) {
                 $('#modalVerPesos').modal('hide');
