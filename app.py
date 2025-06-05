@@ -1285,40 +1285,51 @@ def editar_registro_peso(id):
         return jsonify(success=False, message="No autorizado")
     registro = PesoRegistro.query.get_or_404(id)
     if request.method == 'POST':
-        data_json = registro.data
         try:
+            data_json = registro.data
             data = json.loads(data_json) if data_json else {}
-        except Exception:
-            data = {}
-        req = request.json
-        data['turno'] = req.get('turno')
-        data['sabor_id'] = req.get('producto_id')
-        data['maquina'] = req.get('maquina_id')
-        data['peso_fijado'] = float(req.get('peso_fijado', 0))
-        data['limite_superior'] = float(req.get('limite_superior', 0))
-        data['control_promedio'] = req.get('control_promedio')
-        data['compensacion'] = float(req.get('compensacion', 0))
-        data['intervalo_auto_cero'] = int(req.get('intervalo_auto_cero', 0))
-        data['numero_estable'] = int(req.get('numero_estable', 0))
-        registro.data = json.dumps(data)
-        db.session.commit()
-        return jsonify(success=True)
-    # GET: devolver datos del registro
+            req = request.json
+            captura_idx = int(req.get('captura_idx', 0))
+            capturas = data.get('Capturas', [])
+            if 0 <= captura_idx < len(capturas):
+                captura = capturas[captura_idx]
+                captura['turno'] = req.get('turno')
+                captura['sabor_id'] = req.get('producto_id')
+                captura['maquina'] = req.get('maquina_id')
+                captura['peso_fijado'] = float(req.get('peso_fijado', 0))
+                captura['limite_superior'] = float(req.get('limite_superior', 0))
+                captura['control_promedio'] = req.get('control_promedio')
+                captura['compensacion'] = float(req.get('compensacion', 0))
+                captura['intervalo_auto_cero'] = int(req.get('intervalo_auto_cero', 0))
+                captura['numero_estable'] = int(req.get('numero_estable', 0))
+                data['Capturas'] = capturas
+                registro.data = json.dumps(data)
+                db.session.commit()
+                return jsonify(success=True)
+            else:
+                return jsonify(success=False, message="Índice de captura inválido")
+        except Exception as e:
+            return jsonify(success=False, message=str(e))
+    # GET: devolver datos de la captura específica
     try:
         data = json.loads(registro.data) if registro.data else {}
     except Exception:
         data = {}
+    captura_idx = int(request.args.get('captura_idx', 0))
+    capturas = data.get('Capturas', [])
+    captura = capturas[captura_idx] if 0 <= captura_idx < len(capturas) else {}
     return jsonify(
         id=registro.id,
-        turno=data.get('turno'),
-        producto_id=data.get('sabor_id'),
-        maquina_id=data.get('maquina'),
-        peso_fijado=data.get('peso_fijado'),
-        limite_superior=data.get('limite_superior'),
-        control_promedio=data.get('control_promedio'),
-        compensacion=data.get('compensacion'),
-        intervalo_auto_cero=data.get('intervalo_auto_cero'),
-        numero_estable=data.get('numero_estable')
+        captura_idx=captura_idx,
+        turno=captura.get('turno'),
+        producto_id=captura.get('sabor_id'),
+        maquina_id=captura.get('maquina'),
+        peso_fijado=captura.get('peso_fijado'),
+        limite_superior=captura.get('limite_superior'),
+        control_promedio=captura.get('control_promedio'),
+        compensacion=captura.get('compensacion'),
+        intervalo_auto_cero=captura.get('intervalo_auto_cero'),
+        numero_estable=captura.get('numero_estable')
     )
 
 @app.route('/obtener_pesos_individuales/<int:id>', methods=['GET'])
@@ -1361,6 +1372,27 @@ def vaciar_registro_peso(id):
     registro.data = '{}'
     db.session.commit()
     return jsonify(success=True)
+
+@app.route('/eliminar_captura_peso/<int:id>', methods=['POST'])
+def eliminar_captura_peso(id):
+    if 'user_id' not in session:
+        return jsonify(success=False, message="No autorizado"), 401
+    registro = PesoRegistro.query.get_or_404(id)
+    try:
+        data = json.loads(registro.data) if registro.data else {}
+    except Exception:
+        data = {}
+    req = request.get_json()
+    captura_idx = int(req.get('captura_idx', -1))
+    capturas = data.get('Capturas', [])
+    if 0 <= captura_idx < len(capturas):
+        capturas.pop(captura_idx)
+        data['Capturas'] = capturas
+        registro.data = json.dumps(data)
+        db.session.commit()
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False, message="Índice de captura inválido"), 400
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')
