@@ -266,13 +266,15 @@ def new_eff_empaque():
         # Mostrar el formulario para seleccionar BU y planta
         bus = BusinessUnit.query.all()
         plants = Plant.query.all()
-        return render_template('new_eff_empaque.html', bus=bus, plants=plants)
+        lines = ["SHAFT", "pc500", "pc600"]
+        return render_template('new_eff_empaque.html', bus=bus, plants=plants, lines=lines)
     
     # Si es POST, procesamos la creación del ejercicio
     bu_id = request.form.get('bu_id')
     plant_id = request.form.get('plant_id')
+    linea = request.form.get('line')
     if not bu_id or not plant_id:
-        flash("Debe seleccionar BU y Planta")
+        flash("Debe seleccionar BU, Planta y Linea")
         return redirect(url_for('eff_empaque'))
     default_data = {
         "captures": [
@@ -301,7 +303,7 @@ def new_eff_empaque():
         ]
     }
     try:
-        exercise = EmpaqueExercise(bu_id=bu_id, plant_id=plant_id, data=json.dumps(default_data))
+        exercise = EmpaqueExercise(bu_id=bu_id, plant_id=plant_id, linea=linea, data=json.dumps(default_data))
         db.session.add(exercise)
         db.session.commit()
         flash("Ejercicio creado exitosamente")
@@ -327,6 +329,7 @@ def new_eff_empaque_redirect():
         return redirect(url_for('login'))
     bu_id = request.form.get('bu_id')
     plant_id = request.form.get('plant_id')
+    linea = request.form.get('line')
     if not bu_id or not plant_id:
         flash("Debe seleccionar BU y Planta")
         return redirect(url_for('eff_empaque'))
@@ -357,7 +360,7 @@ def new_eff_empaque_redirect():
         ]
     }
     try:
-        exercise = EmpaqueExercise(bu_id=bu_id, plant_id=plant_id, data=json.dumps(default_data))
+        exercise = EmpaqueExercise(bu_id=bu_id, plant_id=plant_id, linea=linea, data=json.dumps(default_data))
         db.session.add(exercise)
         db.session.commit()
         flash("Ejercicio creado exitosamente")
@@ -1057,6 +1060,8 @@ def update_dme_defecto_cantidad(exercise_id, capture_id):
                     db.session.commit()
                     return jsonify(success=True)
     return jsonify(success=False, message="Defecto no encontrado"), 404
+
+# ===================== RUTAS PARA PESOS =====================
 
 @app.route('/pesos')
 def pesos():
